@@ -13,7 +13,7 @@ export default function Login() {
     try {
       await login(form.email, form.password);
     } catch (err) {
-      setError(err.response?.data?.message || 'Đăng nhập thất bại');
+      setError(err.response?.data?.message || 'Không kết nối được API. Kiểm tra backend và cấu hình VITE_API_URL.');
     }
   };
 
@@ -35,10 +35,6 @@ export default function Login() {
           <input type="password" className="field mt-1" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
         </label>
         <button className="btn-primary w-full">Đăng nhập</button>
-        <div className="mt-4 rounded-md bg-slate-50 p-3 text-xs text-slate-600">
-          Admin: admin@hrms.local / Admin@123<br />
-          User: an.nguyen@hrms.local / User@123
-        </div>
       </form>
     </div>
   );

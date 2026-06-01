@@ -16,20 +16,55 @@ backend/   REST API, MongoDB models, middleware JWT, seed data
 frontend/  Giao diện React cho Admin/User
 ```
 
-## Cần Cài Trước Khi Chạy
+## Người Tải Repo Cần Cài Gì
 
-1. Node.js 18 trở lên
-2. MongoDB Community Server hoặc MongoDB Atlas
-3. Git, nếu tải source từ GitHub
+Trước khi chạy project, máy cần có:
 
-Kiểm tra Node.js:
+| Phần mềm | Bắt buộc | Dùng để làm gì |
+| --- | --- | --- |
+| Node.js 18 trở lên | Có | Chạy backend, frontend và cài package bằng npm |
+| npm | Có | Cài thư viện và chạy script dự án |
+| MongoDB Community Server | Có, nếu dùng database local | Lưu dữ liệu Users, Employees, Departments, LeaveRequests |
+| MongoDB Atlas | Tùy chọn | Dùng thay MongoDB local nếu muốn database online |
+| Git | Có, nếu clone từ GitHub | Tải source code từ repository |
+
+Kiểm tra Node.js và npm:
 
 ```bash
 node -v
 npm -v
 ```
 
-Nếu dùng MongoDB local, cần mở MongoDB trước khi seed/chạy backend.
+Kiểm tra Git:
+
+```bash
+git --version
+```
+
+Nếu dùng MongoDB local, cần cài MongoDB Community Server và mở MongoDB trước khi seed/chạy backend.
+
+Trên macOS dùng Homebrew có thể mở MongoDB bằng:
+
+```bash
+brew services start mongodb-community
+```
+
+Kiểm tra MongoDB:
+
+```bash
+mongosh
+```
+
+Nếu vào được MongoDB shell là MongoDB đã chạy.
+
+## Tải Source Code
+
+Clone repository:
+
+```bash
+git clone https://github.com/datnhox10198-creator/QLnhansu.git
+cd QLnhansu
+```
 
 ## Cài Đặt Dự Án
 
@@ -72,7 +107,7 @@ Lưu ý: lệnh seed sẽ xóa dữ liệu cũ trong database `hrms` và tạo l
 
 ## Chạy Dự Án
 
-Chạy cả frontend và backend:
+Chạy cả frontend và backend tại thư mục gốc dự án:
 
 ```bash
 npm run dev
@@ -131,16 +166,22 @@ Nhân viên thường:
 
 ## Lệnh Thường Dùng
 
+Chạy cả backend và frontend:
+
+```bash
+npm run dev
+```
+
 Chạy backend:
 
 ```bash
-npm run dev --prefix backend
+npm run dev:backend
 ```
 
 Chạy frontend:
 
 ```bash
-npm run dev --prefix frontend
+npm run dev:frontend
 ```
 
 Build frontend:

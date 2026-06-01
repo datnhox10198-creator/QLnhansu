@@ -14,7 +14,17 @@ dotenv.config();
 
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim());
+
+app.use(cors({
+  origin(origin, callback) {
+    const isLocalDev = /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || '');
+    if (!origin || allowedOrigins.includes(origin) || isLocalDev) return callback(null, true);
+    return callback(new Error('Origin khong duoc phep boi CORS'));
+  }
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 
