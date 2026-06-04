@@ -1,6 +1,7 @@
 import { CheckCircle2, ClipboardList, Eye, LoaderCircle, Plus, UsersRound, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
+import ModalPortal from '../components/ModalPortal';
 import { useAuth } from '../context/AuthContext';
 import { date, isoDate } from '../utils/format';
 
@@ -209,11 +210,12 @@ export default function Tasks() {
 function TaskFormModal({ open, form, setForm, isAdmin, team, departments, saving, onClose, onSubmit }) {
   if (!open) return null;
   return (
-    <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm sm:items-center">
-      <div className="modal-fly modal-card w-full max-w-4xl">
+    <ModalPortal>
+      <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/45 p-3 backdrop-blur-sm sm:items-center sm:p-4">
+      <div className="modal-fly modal-card w-full max-w-3xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
-          <div>
-            <h2 className="text-xl font-bold text-ink">{isAdmin ? 'Giao việc cho phòng ban' : 'Giao việc theo ngày'}</h2>
+          <div className="min-w-0">
+            <h2 className="text-lg font-bold text-ink sm:text-xl">{isAdmin ? 'Giao việc cho phòng ban' : 'Giao việc theo ngày'}</h2>
             <p className="text-sm text-slate-500">{isAdmin ? 'Việc sẽ được gửi tới trưởng phòng của phòng ban đã chọn.' : 'Chọn nhân viên trong phòng để giao việc.'}</p>
           </div>
           <button className="btn-secondary shrink-0 px-2" type="button" onClick={onClose} aria-label="Đóng">
@@ -232,6 +234,7 @@ function TaskFormModal({ open, form, setForm, isAdmin, team, departments, saving
         />
       </div>
     </div>
+    </ModalPortal>
   );
 }
 
@@ -264,14 +267,14 @@ function TaskFormContent({ form, setForm, isAdmin, team, departments, saving, on
         <input className="field" type="date" value={form.workDate} onChange={(event) => setForm({ ...form, workDate: event.target.value })} required />
       </div>
 
-      <textarea className="field mt-3 min-h-24 resize-y" placeholder="Chi tiết công việc" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} required />
+      <textarea className="field mt-3 min-h-20 resize-y" placeholder="Chi tiết công việc" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} required />
 
       {isAdmin ? (
         <div className="mt-4">
           <p className="mb-2 text-sm font-semibold text-slate-700">Chọn phòng ban, việc sẽ giao cho trưởng phòng</p>
-          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-2 md:grid-cols-2">
             {departments.map((department) => (
-              <label key={department._id} className="flex min-h-14 items-center gap-3 rounded-2xl border border-slate-200 px-3 py-2 text-sm">
+              <label key={department._id} className="flex min-h-12 items-center gap-3 rounded-2xl border border-slate-200 px-3 py-2 text-sm">
                 <input type="checkbox" checked={selectedDepartmentIds.has(department._id)} onChange={() => toggleDepartment(department._id)} />
                 <span className="min-w-0">
                   <span className="block truncate font-semibold text-ink">{department.departmentName}</span>
@@ -285,9 +288,9 @@ function TaskFormContent({ form, setForm, isAdmin, team, departments, saving, on
       ) : (
         <div className="mt-4">
           <p className="mb-2 text-sm font-semibold text-slate-700">Chọn nhân viên cùng làm, tối đa 5 người</p>
-          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-2 md:grid-cols-2">
             {team.map((member) => (
-              <label key={member._id} className="flex min-h-14 items-center gap-3 rounded-2xl border border-slate-200 px-3 py-2 text-sm">
+              <label key={member._id} className="flex min-h-12 items-center gap-3 rounded-2xl border border-slate-200 px-3 py-2 text-sm">
                 <input type="checkbox" checked={selectedEmployeeIds.has(member._id)} onChange={() => toggleEmployee(member._id)} disabled={!selectedEmployeeIds.has(member._id) && form.assignedEmployeeIds.length >= 5} />
                 <span className="min-w-0">
                   <span className="block truncate font-semibold text-ink">{member.fullName}</span>
@@ -363,7 +366,8 @@ function TaskDetailModal({ task, currentEmployeeId, updatingTaskId, onClose, onS
   const updating = updatingTaskId === task._id;
 
   return (
-    <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 sm:items-center">
+    <ModalPortal>
+      <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 sm:items-center">
       <div className="modal-fly modal-card w-full max-w-3xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div className="min-w-0">
@@ -421,6 +425,7 @@ function TaskDetailModal({ task, currentEmployeeId, updatingTaskId, onClose, onS
         </div>
       </div>
     </div>
+    </ModalPortal>
   );
 }
 

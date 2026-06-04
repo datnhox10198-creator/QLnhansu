@@ -2,6 +2,7 @@ import { Edit2, Plus, Trash2, UserRoundCog, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import api from '../api/client';
 import ConfirmModal from '../components/ConfirmModal';
+import ModalPortal from '../components/ModalPortal';
 
 const empty = { departmentName: '', description: '', managerId: '' };
 
@@ -139,7 +140,8 @@ function DepartmentFormModal({ open, editing, form, employees, saving, onChange,
   if (!open) return null;
 
   return (
-    <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm sm:items-center">
+    <ModalPortal>
+      <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm sm:items-center">
       <div className="modal-fly modal-card w-full max-w-xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div>
@@ -177,5 +179,6 @@ function DepartmentFormModal({ open, editing, form, employees, saving, onChange,
         </form>
       </div>
     </div>
+    </ModalPortal>
   );
 }

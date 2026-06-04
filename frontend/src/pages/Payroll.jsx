@@ -1,6 +1,7 @@
 import { Banknote, Building2, FileText, UsersRound, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
+import ModalPortal from '../components/ModalPortal';
 import { useAuth } from '../context/AuthContext';
 import { money } from '../utils/format';
 
@@ -173,7 +174,8 @@ function DepartmentPayrollModal({ department, period, onClose }) {
   if (!department) return null;
 
   return (
-    <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 sm:items-center">
+    <ModalPortal>
+      <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 sm:items-center">
       <div className="modal-card w-full max-w-4xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div>
@@ -217,6 +219,7 @@ function DepartmentPayrollModal({ department, period, onClose }) {
         </div>
       </div>
     </div>
+    </ModalPortal>
   );
 }
 

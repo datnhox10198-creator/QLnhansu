@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/client';
 import ConfirmModal from '../components/ConfirmModal';
 import DataTable from '../components/DataTable';
+import ModalPortal from '../components/ModalPortal';
 import { useAuth } from '../context/AuthContext';
 import { date } from '../utils/format';
 
@@ -146,7 +147,8 @@ function LeaveFormModal({ open, isAdmin, employees, form, saving, onChange, onCl
   if (!open) return null;
 
   return (
-    <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm sm:items-center">
+    <ModalPortal>
+      <div className="modal-backdrop fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/45 p-4 backdrop-blur-sm sm:items-center">
       <div className="modal-fly modal-card w-full max-w-3xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div className="min-w-0">
@@ -185,5 +187,6 @@ function LeaveFormModal({ open, isAdmin, employees, form, saving, onChange, onCl
         </form>
       </div>
     </div>
+    </ModalPortal>
   );
 }

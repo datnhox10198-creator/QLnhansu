@@ -1,9 +1,11 @@
 import { AlertTriangle } from 'lucide-react';
+import ModalPortal from './ModalPortal';
 
 export default function ConfirmModal({ open, title, message, onCancel, onConfirm }) {
   if (!open) return null;
   return (
-    <div className="modal-backdrop fixed inset-0 z-50 grid place-items-center bg-slate-950/45 p-4 backdrop-blur-sm">
+    <ModalPortal>
+      <div className="modal-backdrop fixed inset-0 z-50 grid place-items-center bg-slate-950/45 p-4 backdrop-blur-sm">
       <div className="modal-fly modal-card w-full max-w-md p-5">
         <div className="flex items-start gap-3">
           <div className="rounded-2xl bg-rose-50 p-2 text-rose-700 ring-1 ring-rose-100"><AlertTriangle size={22} /></div>
@@ -18,5 +20,6 @@ export default function ConfirmModal({ open, title, message, onCancel, onConfirm
         </div>
       </div>
     </div>
+    </ModalPortal>
   );
 }

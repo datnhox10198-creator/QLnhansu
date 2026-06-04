@@ -1,4 +1,4 @@
-import { CalendarDays, Clock3, LogIn, LogOut } from 'lucide-react';
+import { Clock3, LogIn, LogOut } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
 import DataTable from '../components/DataTable';
@@ -137,10 +137,7 @@ export default function Attendance() {
               <option key={department._id} value={department._id}>{department.departmentName}</option>
             ))}
           </select>
-          <div className="relative md:max-w-xs">
-            <CalendarDays className="pointer-events-none absolute left-3 top-2.5 text-slate-400" size={16} />
-            <input className="field pl-9" type="date" value={filters.workDate} onChange={(event) => setFilters({ ...filters, workDate: event.target.value })} />
-          </div>
+          <input className="field md:max-w-xs" type="date" value={filters.workDate} onChange={(event) => setFilters({ ...filters, workDate: event.target.value })} />
         </div>
       )}
 
