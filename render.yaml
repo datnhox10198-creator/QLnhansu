@@ -17,16 +17,4 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: CLIENT_URL
-        value: https://qlnhansu-web.onrender.com
-
-  - type: web
-    name: qlnhansu-web
-    runtime: static
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: NODE_VERSION
-        value: 22
-      - key: VITE_API_URL
-        value: https://qlnhansu-api.onrender.com/api
+        sync: false
