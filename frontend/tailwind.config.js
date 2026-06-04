@@ -3,9 +3,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        ink: '#172033',
-        brand: '#0f766e',
-        accent: '#e11d48'
+        ink: '#101828',
+        brand: '#0d9488',
+        accent: '#f43f5e'
       }
     }
   },

@@ -5,7 +5,13 @@ import StatCard from '../components/StatCard';
 
 export default function Reports() {
   const [stats, setStats] = useState({});
-  useEffect(() => { api.get('/dashboard/admin').then(({ data }) => setStats(data)); }, []);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    api.get('/dashboard/admin')
+      .then(({ data }) => setStats(data))
+      .catch((error) => setError(error.response?.data?.message || 'Không tải được báo cáo.'));
+  }, []);
 
   const rows = [
     ['Tổng số nhân viên', stats.totalEmployees],
@@ -21,6 +27,7 @@ export default function Reports() {
         <h1 className="text-2xl font-bold text-ink">Báo cáo thống kê</h1>
         <p className="text-sm text-slate-500">Tổng hợp số liệu phục vụ quản trị nhân sự</p>
       </div>
+      {error && <div className="rounded-2xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <StatCard label="Nhân viên" value={stats.totalEmployees} icon={UsersRound} />
         <StatCard label="Phòng ban" value={stats.totalDepartments} icon={Building2} tone="blue" />
@@ -28,7 +35,7 @@ export default function Reports() {
         <StatCard label="Chờ duyệt" value={stats.pendingLeaves} icon={CalendarClock} tone="amber" />
         <StatCard label="Đã duyệt" value={stats.approvedLeaves} icon={CalendarCheck} tone="teal" />
       </div>
-      <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white shadow-sm">
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between border-b border-slate-100 px-5 py-4 last:border-b-0">
             <span className="text-slate-600">{label}</span>

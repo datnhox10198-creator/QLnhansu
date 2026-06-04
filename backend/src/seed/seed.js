@@ -1,16 +1,18 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db.js';
+import Attendance from '../models/Attendance.js';
 import Department from '../models/Department.js';
 import Employee from '../models/Employee.js';
 import LeaveRequest from '../models/LeaveRequest.js';
 import User from '../models/User.js';
+import WorkTask from '../models/WorkTask.js';
 
 dotenv.config();
 
 const run = async () => {
   await connectDB();
-  await Promise.all([User.deleteMany(), Department.deleteMany(), Employee.deleteMany(), LeaveRequest.deleteMany()]);
+  await Promise.all([User.deleteMany(), Department.deleteMany(), Employee.deleteMany(), LeaveRequest.deleteMany(), Attendance.deleteMany(), WorkTask.deleteMany()]);
 
   const [hr, it, finance] = await Department.create([
     { departmentName: 'Nhan su', description: 'Tuyen dung, dao tao va chinh sach nhan su' },
@@ -167,6 +169,15 @@ const run = async () => {
     { employeeId: employees[0]._id, leaveDate: '2026-06-15', reason: 'Nghi phep nam', status: 'Pending' },
     { employeeId: employees[1]._id, leaveDate: '2026-06-16', reason: 'Nghi ca nhan', status: 'Pending' },
     { employeeId: employees[2]._id, leaveDate: '2026-06-17', reason: 'Kham suc khoe dinh ky', status: 'Pending' }
+  ]);
+
+  await Attendance.create([
+    { employeeId: employees[3]._id, workDate: '2026-06-04', checkInAt: new Date('2026-06-04T01:05:00.000Z'), checkOutAt: new Date('2026-06-04T10:10:00.000Z'), status: 'Completed' },
+    { employeeId: employees[4]._id, workDate: '2026-06-04', checkInAt: new Date('2026-06-04T01:15:00.000Z'), status: 'CheckedIn' },
+    { employeeId: employees[5]._id, workDate: '2026-06-04', checkInAt: new Date('2026-06-04T01:00:00.000Z'), checkOutAt: new Date('2026-06-04T09:45:00.000Z'), status: 'Completed' },
+    { employeeId: employees[6]._id, workDate: '2026-06-04', checkInAt: new Date('2026-06-04T01:25:00.000Z'), status: 'CheckedIn' },
+    { employeeId: employees[7]._id, workDate: '2026-06-04', checkInAt: new Date('2026-06-04T00:55:00.000Z'), checkOutAt: new Date('2026-06-04T09:30:00.000Z'), status: 'Completed' },
+    { employeeId: employees[8]._id, workDate: '2026-06-04', checkInAt: new Date('2026-06-04T01:20:00.000Z'), status: 'CheckedIn' }
   ]);
 
   console.log('Seed completed');

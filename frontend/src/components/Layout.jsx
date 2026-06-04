@@ -1,4 +1,4 @@
-import { Building2, CalendarDays, ClipboardList, LayoutDashboard, LogOut, Menu, ShieldCheck, UserRound, UsersRound, X } from 'lucide-react';
+import { Banknote, Building2, CalendarDays, ClipboardCheck, ClipboardList, Clock3, LayoutDashboard, LogOut, Menu, ShieldCheck, UserRound, UsersRound, X } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -12,12 +12,18 @@ export default function Layout() {
         ['/', LayoutDashboard, 'Dashboard'],
         ['/employees', UsersRound, 'Nhân viên'],
         ['/departments', Building2, 'Phòng ban'],
+        ['/attendance', Clock3, 'Chấm công'],
+        ['/tasks', ClipboardCheck, 'Công việc'],
+        ['/payroll', Banknote, 'Phiếu lương'],
         ['/leaves', CalendarDays, 'Nghỉ phép'],
         ['/reports', ClipboardList, 'Báo cáo']
       ]
     : [
         ['/', LayoutDashboard, 'Dashboard'],
         ['/profile', UserRound, 'Hồ sơ'],
+        ['/attendance', Clock3, 'Chấm công'],
+        ['/tasks', ClipboardCheck, 'Công việc'],
+        ['/payroll', Banknote, 'Phiếu lương'],
         ['/leaves', CalendarDays, 'Nghỉ phép']
       ];
 
@@ -25,7 +31,7 @@ export default function Layout() {
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between px-5 py-5">
         <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-lg bg-brand text-white shadow-sm">
+          <div className="grid h-11 w-11 place-items-center rounded-3xl bg-brand text-white shadow-sm">
             <ShieldCheck size={23} />
           </div>
           <div>
@@ -46,10 +52,10 @@ export default function Layout() {
             end={to === '/'}
             onClick={() => setOpen(false)}
             className={({ isActive }) =>
-              `group flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition ${
+              `group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition ${
                 isActive
                   ? 'bg-teal-50 text-brand shadow-sm ring-1 ring-teal-100'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-ink'
+                  : 'text-slate-600 hover:bg-white hover:text-ink hover:shadow-sm'
               }`
             }
           >
@@ -59,9 +65,9 @@ export default function Layout() {
         ))}
       </nav>
 
-      <div className="m-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+      <div className="m-3 rounded-3xl border border-slate-200 bg-white/80 p-3 shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-md bg-white font-bold text-brand ring-1 ring-slate-200">
+          <div className="grid h-10 w-10 place-items-center rounded-2xl bg-teal-50 font-bold text-brand ring-1 ring-teal-100">
             {user.fullName?.charAt(0)}
           </div>
           <div className="min-w-0">
@@ -77,13 +83,13 @@ export default function Layout() {
   );
 
   return (
-    <div className="min-h-screen bg-[#f6f8f7]">
-      <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur lg:hidden">
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/70 bg-white/85 px-4 backdrop-blur lg:hidden">
         <button className="btn-secondary px-2" onClick={() => setOpen(true)} aria-label="Mở menu">
           <Menu size={18} />
         </button>
         <div className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-md bg-brand text-white">
+          <div className="grid h-9 w-9 place-items-center rounded-2xl bg-brand text-white">
             <ShieldCheck size={19} />
           </div>
           <div>
@@ -96,11 +102,11 @@ export default function Layout() {
         </button>
       </header>
 
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-slate-200 bg-white shadow-sm lg:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-white/70 bg-white/85 shadow-xl shadow-slate-900/5 backdrop-blur lg:block">
         <NavContent />
       </aside>
 
-      <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-white shadow-xl transition-transform lg:hidden ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-white/95 shadow-2xl transition-transform lg:hidden ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <NavContent />
       </aside>
       {open && <button className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setOpen(false)} aria-label="Đóng menu" />}

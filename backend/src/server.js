@@ -4,11 +4,14 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { connectDB } from './config/db.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import departmentRoutes from './routes/departmentRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
 import leaveRoutes from './routes/leaveRoutes.js';
+import payrollRoutes from './routes/payrollRoutes.js';
+import taskRoutes from './routes/taskRoutes.js';
 
 dotenv.config();
 
@@ -33,7 +36,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/attendance', attendanceRoutes);
 app.use('/api/leaves', leaveRoutes);
+app.use('/api/payroll', payrollRoutes);
+app.use('/api/tasks', taskRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);
