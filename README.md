@@ -190,6 +190,20 @@ HRMS_ADMIN_EMAIL=admin@hrms.local
 HRMS_ADMIN_PASSWORD=Admin@123
 ```
 
+### Tạo và phân công công việc mẫu
+
+```bash
+npm run sync:tasks:api --prefix backend
+```
+
+Lệnh này:
+
+- Tạo nhiệm vụ quản lý phù hợp cho trưởng phòng Marketing, IT, Tài Chính và Kinh Doanh.
+- Tạo bốn công việc chuyên môn cho mỗi phòng ban.
+- Phân công mỗi nhân viên cấp dưới vào hai công việc.
+- Phân bố tiến độ `Pending`, `Doing`, `Done` theo seed cố định.
+- Có thể chạy lại mà không tạo công việc trùng.
+
 ## Tài khoản demo
 
 ### Quản trị viên
@@ -263,6 +277,9 @@ npm run sync:employees --prefix backend
 
 # Đồng bộ nhân viên qua API
 npm run sync:employees:api --prefix backend
+
+# Tạo công việc và tiến độ mẫu qua API
+npm run sync:tasks:api --prefix backend
 ```
 
 ## Triển khai

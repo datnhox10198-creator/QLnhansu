@@ -8,7 +8,8 @@
     "start": "node src/server.js",
     "seed": "node src/seed/seed.js",
     "sync:employees": "node src/seed/syncEmployees.js",
-    "sync:employees:api": "node src/seed/syncEmployeesApi.js"
+    "sync:employees:api": "node src/seed/syncEmployeesApi.js",
+    "sync:tasks:api": "node src/seed/syncTasksApi.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
