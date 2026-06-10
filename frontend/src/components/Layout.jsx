@@ -25,6 +25,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const pageMeta = {
   '/': ['Tổng quan', 'Không gian quản trị nhân sự'],
@@ -40,6 +42,7 @@ const pageMeta = {
 
 export default function Layout() {
   const { user, employee, logout } = useAuth();
+  const { locale, t } = useLanguage();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -50,35 +53,37 @@ export default function Layout() {
   const [activeResult, setActiveResult] = useState(0);
   const [systemStatus, setSystemStatus] = useState({ state: 'checking', checkedAt: null });
   const searchInputRef = useRef(null);
-  const displayPosition = employee?.position || (user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên');
-  const [pageTitle, pageDescription] = pageMeta[pathname] || pageMeta['/'];
+  const displayPosition = employee?.position || t(user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên');
+  const [rawPageTitle, rawPageDescription] = pageMeta[pathname] || pageMeta['/'];
+  const pageTitle = t(rawPageTitle);
+  const pageDescription = t(rawPageDescription);
   const links = user.role === 'admin'
     ? [
-        ['/', LayoutDashboard, 'Tổng quan'],
-        ['/employees', UsersRound, 'Nhân viên'],
-        ['/departments', Building2, 'Phòng ban'],
-        ['/attendance', Clock3, 'Chấm công'],
-        ['/tasks', ClipboardCheck, 'Công việc'],
-        ['/payroll', Banknote, 'Phiếu lương'],
-        ['/leaves', CalendarDays, 'Nghỉ phép'],
-        ['/reports', ClipboardList, 'Báo cáo']
+        ['/', LayoutDashboard, t('Tổng quan')],
+        ['/employees', UsersRound, t('Nhân viên')],
+        ['/departments', Building2, t('Phòng ban')],
+        ['/attendance', Clock3, t('Chấm công')],
+        ['/tasks', ClipboardCheck, t('Công việc')],
+        ['/payroll', Banknote, t('Phiếu lương')],
+        ['/leaves', CalendarDays, t('Nghỉ phép')],
+        ['/reports', ClipboardList, t('Báo cáo')]
       ]
     : [
-        ['/', LayoutDashboard, 'Tổng quan'],
-        ['/profile', UserRound, 'Hồ sơ'],
-        ['/attendance', Clock3, 'Chấm công'],
-        ['/tasks', ClipboardCheck, 'Công việc'],
-        ['/payroll', Banknote, 'Phiếu lương'],
-        ['/leaves', CalendarDays, 'Nghỉ phép']
+        ['/', LayoutDashboard, t('Tổng quan')],
+        ['/profile', UserRound, t('Hồ sơ')],
+        ['/attendance', Clock3, t('Chấm công')],
+        ['/tasks', ClipboardCheck, t('Công việc')],
+        ['/payroll', Banknote, t('Phiếu lương')],
+        ['/leaves', CalendarDays, t('Nghỉ phép')]
       ];
   const searchablePages = useMemo(
     () => links.map(([to, icon, label]) => ({
       to,
       icon,
       label,
-      description: pageMeta[to]?.[1] || 'Đi tới trang'
+      description: t(pageMeta[to]?.[1] || 'Đi tới trang')
     })),
-    [user.role]
+    [user.role, t]
   );
   const searchResults = useMemo(() => {
     const query = searchQuery.trim().toLocaleLowerCase('vi');
@@ -89,12 +94,12 @@ export default function Layout() {
   }, [searchQuery, searchablePages]);
   const notifications = user.role === 'admin'
     ? [
-        { icon: CalendarDays, title: 'Kiểm tra đơn nghỉ phép', detail: 'Xem các yêu cầu đang chờ xử lý.', to: '/leaves', tone: 'blue' },
-        { icon: ClipboardCheck, title: 'Theo dõi công việc', detail: 'Kiểm tra tiến độ công việc của đội ngũ.', to: '/tasks', tone: 'violet' }
+        { icon: CalendarDays, title: t('Kiểm tra đơn nghỉ phép'), detail: t('Xem các yêu cầu đang chờ xử lý.'), to: '/leaves', tone: 'blue' },
+        { icon: ClipboardCheck, title: t('Theo dõi công việc'), detail: t('Kiểm tra tiến độ công việc của đội ngũ.'), to: '/tasks', tone: 'violet' }
       ]
     : [
-        { icon: ClipboardCheck, title: 'Công việc của bạn', detail: 'Xem và cập nhật tiến độ hôm nay.', to: '/tasks', tone: 'blue' },
-        { icon: CheckCircle2, title: 'Chấm công hôm nay', detail: 'Kiểm tra trạng thái check-in và check-out.', to: '/attendance', tone: 'green' }
+        { icon: ClipboardCheck, title: t('Công việc của bạn'), detail: t('Xem và cập nhật tiến độ hôm nay.'), to: '/tasks', tone: 'blue' },
+        { icon: CheckCircle2, title: t('Chấm công hôm nay'), detail: t('Kiểm tra trạng thái check-in và check-out.'), to: '/attendance', tone: 'green' }
       ];
 
   const openNotification = (to) => {
@@ -185,17 +190,17 @@ export default function Layout() {
             <ShieldCheck size={22} strokeWidth={2.4} />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">Quản lý nhân sự</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">{t('Quản lý nhân sự')}</p>
             <p className="mt-0.5 text-xl font-extrabold tracking-tight text-slate-800">HRMS</p>
           </div>
         </div>
-        <button className="icon-button-dark lg:hidden" onClick={() => setOpen(false)} aria-label="Đóng menu">
+        <button className="icon-button-dark lg:hidden" onClick={() => setOpen(false)} aria-label={t('Đóng menu')}>
           <X size={18} />
         </button>
       </div>
 
       <div className="px-4 pt-6">
-        <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Your space</p>
+        <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">{t('Your space')}</p>
         <nav className="space-y-1.5">
           {links.map(([to, Icon, label]) => (
             <NavLink
@@ -223,7 +228,7 @@ export default function Layout() {
               <p className="truncate text-sm font-semibold text-slate-800">{user.fullName}</p>
               <p className="truncate text-xs text-slate-500">{displayPosition}</p>
             </div>
-            <button className="icon-button-dark" onClick={logout} aria-label="Đăng xuất">
+            <button className="icon-button-dark" onClick={logout} aria-label={t('Đăng xuất')}>
               <LogOut size={16} />
             </button>
           </div>
@@ -242,12 +247,12 @@ export default function Layout() {
       <aside className={`sidebar fixed inset-y-0 left-0 z-50 w-[276px] transition-transform duration-300 lg:hidden ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <NavContent />
       </aside>
-      {open && <button className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} aria-label="Đóng menu" />}
+      {open && <button className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm lg:hidden" onClick={() => setOpen(false)} aria-label={t('Đóng menu')} />}
 
       <div className="lg:pl-[276px]">
         <header className="topbar sticky top-0 z-20">
           <div className="flex h-20 items-center gap-4 px-4 sm:px-6 lg:px-8">
-            <button className="icon-button lg:hidden" onClick={() => setOpen(true)} aria-label="Mở menu">
+            <button className="icon-button lg:hidden" onClick={() => setOpen(true)} aria-label={t('Mở menu')}>
               <Menu size={19} />
             </button>
             <div className="min-w-0">
@@ -263,13 +268,13 @@ export default function Layout() {
               <button
                 className={`status-pill status-${systemStatus.state} hidden xl:flex`}
                 onClick={checkSystem}
-                title={systemStatus.checkedAt ? `Kiểm tra lúc ${systemStatus.checkedAt.toLocaleTimeString('vi-VN')}` : 'Đang kiểm tra hệ thống'}
+                title={systemStatus.checkedAt ? `${t('Kiểm tra lúc')} ${systemStatus.checkedAt.toLocaleTimeString(locale)}` : t('Đang kiểm tra hệ thống')}
               >
                 <span className="status-dot" />
                 <span>
-                  {systemStatus.state === 'checking' && 'Đang kiểm tra'}
-                  {systemStatus.state === 'online' && `Hệ thống ổn định${systemStatus.latency ? ` · ${systemStatus.latency}ms` : ''}`}
-                  {systemStatus.state === 'offline' && 'Mất kết nối API'}
+                  {systemStatus.state === 'checking' && t('Đang kiểm tra')}
+                  {systemStatus.state === 'online' && `${t('Hệ thống ổn định')}${systemStatus.latency ? ` · ${systemStatus.latency}ms` : ''}`}
+                  {systemStatus.state === 'offline' && t('Mất kết nối API')}
                 </span>
                 {systemStatus.state === 'checking'
                   ? <LoaderCircle className="animate-spin" size={13} />
@@ -280,16 +285,17 @@ export default function Layout() {
                 onClick={openSearch}
               >
                 <Search size={15} />
-                <span className="w-40 text-left">Tìm kiếm nhanh...</span>
+                <span className="w-40 text-left">{t('Tìm kiếm nhanh...')}</span>
                 <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px]">Ctrl K</kbd>
               </button>
-              <button className="icon-button xl:hidden" onClick={openSearch} aria-label="Tìm kiếm nhanh">
+              <button className="icon-button xl:hidden" onClick={openSearch} aria-label={t('Tìm kiếm nhanh')}>
                 <Search size={18} />
               </button>
+              <LanguageSwitcher compact />
               <div className="relative">
                 <button
                   className={`icon-button relative ${notificationsOpen ? 'bg-blue-50 text-blue-600' : ''}`}
-                  aria-label="Thông báo"
+                  aria-label={t('Thông báo')}
                   aria-expanded={notificationsOpen}
                   onClick={() => {
                     setNotificationsOpen((value) => !value);
@@ -302,14 +308,14 @@ export default function Layout() {
 
                 {notificationsOpen && (
                   <>
-                    <button className="fixed inset-0 z-30 cursor-default" onClick={() => setNotificationsOpen(false)} aria-label="Đóng thông báo" />
+                    <button className="fixed inset-0 z-30 cursor-default" onClick={() => setNotificationsOpen(false)} aria-label={t('Đóng thông báo')} />
                     <div className="notification-panel absolute right-0 top-12 z-40 w-[min(22rem,calc(100vw-2rem))]">
                       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">Thông báo</p>
-                          <p className="text-xs text-slate-400">Các việc bạn có thể cần xử lý</p>
+                          <p className="text-sm font-semibold text-slate-900">{t('Thông báo')}</p>
+                          <p className="text-xs text-slate-400">{t('Các việc bạn có thể cần xử lý')}</p>
                         </div>
-                        <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-semibold text-blue-600">{notifications.length} mục</span>
+                        <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-semibold text-blue-600">{notifications.length} {t('mục')}</span>
                       </div>
                       <div className="p-2">
                         {notifications.map(({ icon: Icon, title, detail, to, tone }) => (
@@ -341,7 +347,7 @@ export default function Layout() {
         <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto max-w-[1480px]">
             <div className="mb-5 flex items-center gap-2 text-xs font-semibold text-slate-500 lg:hidden">
-              <Zap size={14} /> Make today count
+              <Zap size={14} /> {t('Make today count')}
             </div>
             <Outlet />
           </div>
@@ -350,7 +356,7 @@ export default function Layout() {
 
       {searchOpen && (
         <div className="command-backdrop" onMouseDown={closeSearch}>
-          <section className="command-palette" onMouseDown={(event) => event.stopPropagation()} aria-label="Tìm kiếm nhanh">
+          <section className="command-palette" onMouseDown={(event) => event.stopPropagation()} aria-label={t('Tìm kiếm nhanh')}>
             <div className="command-search">
               <Search size={20} />
               <input
@@ -358,14 +364,14 @@ export default function Layout() {
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 onKeyDown={handleSearchKeyDown}
-                placeholder="Tìm trang hoặc chức năng..."
-                aria-label="Tìm trang hoặc chức năng"
+                placeholder={t('Tìm trang hoặc chức năng...')}
+                aria-label={t('Tìm trang hoặc chức năng')}
               />
-              <button onClick={closeSearch} aria-label="Đóng tìm kiếm"><X size={18} /></button>
+              <button onClick={closeSearch} aria-label={t('Đóng tìm kiếm')}><X size={18} /></button>
             </div>
 
             <div className="command-results">
-              <p className="command-label">{searchQuery ? 'Kết quả tìm kiếm' : 'Đi tới nhanh'}</p>
+              <p className="command-label">{searchQuery ? t('Kết quả tìm kiếm') : t('Đi tới nhanh')}</p>
               {searchResults.map((result, index) => {
                 const Icon = result.icon;
                 return (
@@ -386,15 +392,15 @@ export default function Layout() {
               })}
               {!searchResults.length && (
                 <div className="px-4 py-10 text-center text-sm text-slate-500">
-                  Không tìm thấy chức năng phù hợp.
+                  {t('Không tìm thấy chức năng phù hợp.')}
                 </div>
               )}
             </div>
 
             <footer className="command-footer">
-              <span><kbd>↑</kbd><kbd>↓</kbd> Di chuyển</span>
-              <span><kbd>Enter</kbd> Mở</span>
-              <span><kbd>Esc</kbd> Đóng</span>
+              <span><kbd>↑</kbd><kbd>↓</kbd> {t('Di chuyển')}</span>
+              <span><kbd>Enter</kbd> {t('Mở')}</span>
+              <span><kbd>Esc</kbd> {t('Đóng')}</span>
             </footer>
           </section>
         </div>

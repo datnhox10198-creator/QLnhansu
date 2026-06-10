@@ -1,6 +1,8 @@
 import { ChevronLeft, ChevronRight, Database } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function DataTable({ columns, rows, page, pages, onPage }) {
+  const { t } = useLanguage();
   return (
     <div className="data-surface">
       <div className="overflow-x-auto">
@@ -9,7 +11,7 @@ export default function DataTable({ columns, rows, page, pages, onPage }) {
             <tr>
               {columns.map((column) => (
                 <th key={column.key} className="px-5 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.12em] text-slate-400">
-                  {column.label}
+                  {t(column.label)}
                 </th>
               ))}
             </tr>
@@ -28,8 +30,8 @@ export default function DataTable({ columns, rows, page, pages, onPage }) {
               <tr>
                 <td colSpan={columns.length} className="px-5 py-16 text-center">
                   <Database className="mx-auto mb-3 text-slate-300" size={28} />
-                  <p className="font-medium text-slate-500">Chưa có dữ liệu</p>
-                  <p className="mt-1 text-xs text-slate-400">Dữ liệu mới sẽ xuất hiện tại đây.</p>
+                  <p className="font-medium text-slate-500">{t('Chưa có dữ liệu')}</p>
+                  <p className="mt-1 text-xs text-slate-400">{t('Dữ liệu mới sẽ xuất hiện tại đây.')}</p>
                 </td>
               </tr>
             )}
@@ -38,10 +40,10 @@ export default function DataTable({ columns, rows, page, pages, onPage }) {
       </div>
       {pages > 1 && (
         <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/60 px-5 py-3">
-          <p className="text-xs text-slate-500">Trang <strong className="text-slate-800">{page}</strong> trên {pages}</p>
+          <p className="text-xs text-slate-500">{t('Trang')} <strong className="text-slate-800">{page}</strong> {t('trên')} {pages}</p>
           <div className="flex gap-2">
-            <button className="icon-button" disabled={page <= 1} onClick={() => onPage(page - 1)} aria-label="Trang trước"><ChevronLeft size={16} /></button>
-            <button className="icon-button" disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label="Trang sau"><ChevronRight size={16} /></button>
+            <button className="icon-button" disabled={page <= 1} onClick={() => onPage(page - 1)} aria-label={t('Trang trước')}><ChevronLeft size={16} /></button>
+            <button className="icon-button" disabled={page >= pages} onClick={() => onPage(page + 1)} aria-label={t('Trang sau')}><ChevronRight size={16} /></button>
           </div>
         </div>
       )}

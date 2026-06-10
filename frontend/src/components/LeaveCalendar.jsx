@@ -1,6 +1,7 @@
 import { Building2, CalendarDays, ChevronLeft, ChevronRight, FileText, UserRound, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
+import { useLanguage } from '../context/LanguageContext';
 import ModalPortal from './ModalPortal';
 
 const weekdays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
@@ -43,6 +44,7 @@ const statusText = {
 const statusOptions = ['All', 'Approved', 'Pending', 'Rejected'];
 
 export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
+  const { language, locale, t } = useLanguage();
   const [mode, setMode] = useState('week');
   const [cursor, setCursor] = useState(new Date());
   const [leaves, setLeaves] = useState([]);
@@ -53,7 +55,7 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
   useEffect(() => {
     api.get('/leaves')
       .then(({ data }) => setLeaves(data))
-      .catch((error) => setError(error.response?.data?.message || 'Không tải được lịch nghỉ phép.'));
+      .catch((error) => setError(error.response?.data?.message || t('Không tải được lịch nghỉ phép.')));
   }, []);
 
   const days = useMemo(() => {
@@ -71,10 +73,10 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
     if (mode === 'week') {
       const first = days[0];
       const last = days[6];
-      return `${first.toLocaleDateString('vi-VN')} - ${last.toLocaleDateString('vi-VN')}`;
+      return `${first.toLocaleDateString(locale)} - ${last.toLocaleDateString(locale)}`;
     }
-    return cursor.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
-  }, [cursor, days, mode]);
+    return cursor.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+  }, [cursor, days, locale, mode]);
 
   const move = (direction) => {
     setCursor((current) => (mode === 'week' ? addDays(current, direction * 7) : addMonths(current, direction)));
@@ -120,12 +122,12 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="grid grid-cols-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 text-sm">
-            <button type="button" className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'week' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('week')}>Tuần</button>
-            <button type="button" className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'month' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('month')}>Tháng</button>
+            <button type="button" className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'week' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('week')}>{t('Tuần')}</button>
+            <button type="button" className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'month' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('month')}>{t('Tháng')}</button>
           </div>
-          <button type="button" className="btn-secondary px-2" onClick={() => move(-1)} aria-label="Trước"><ChevronLeft size={17} /></button>
-          <button type="button" className="btn-secondary px-2" onClick={() => setCursor(new Date())}>Hôm nay</button>
-          <button type="button" className="btn-secondary px-2" onClick={() => move(1)} aria-label="Sau"><ChevronRight size={17} /></button>
+          <button type="button" className="btn-secondary px-2" onClick={() => move(-1)} aria-label={t('Trước')}><ChevronLeft size={17} /></button>
+          <button type="button" className="btn-secondary px-2" onClick={() => setCursor(new Date())}>{t('Hôm nay')}</button>
+          <button type="button" className="btn-secondary px-2" onClick={() => move(1)} aria-label={t('Sau')}><ChevronRight size={17} /></button>
         </div>
       </div>
 
@@ -134,15 +136,15 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
       <div className="calendar-overview">
         <div className="calendar-summary">
           <div>
-            <span>Tổng đơn</span>
+            <span>{t('Tổng đơn')}</span>
             <strong>{rangeLeaves.length}</strong>
           </div>
           <div>
-            <span>Nhân sự nghỉ</span>
+            <span>{t('Nhân sự nghỉ')}</span>
             <strong>{uniqueEmployees}</strong>
           </div>
         </div>
-        <div className="calendar-filters" aria-label="Lọc lịch theo trạng thái">
+        <div className="calendar-filters" aria-label={t('Lọc lịch theo trạng thái')}>
           {statusOptions.map((status) => (
             <button
               key={status}
@@ -152,7 +154,7 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
               aria-pressed={statusFilter === status}
             >
               <i />
-              {status === 'All' ? 'Tất cả' : statusText[status]}
+              {t(status === 'All' ? 'Tất cả' : statusText[status])}
               <span>{statusCount(status)}</span>
             </button>
           ))}
@@ -160,7 +162,7 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
       </div>
 
       <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50/80 text-center text-xs font-bold text-slate-500">
-        {weekdays.map((day) => <div key={day} className="px-2 py-2">{day}</div>)}
+        {(language === 'en' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : weekdays).map((day) => <div key={day} className="px-2 py-2">{day}</div>)}
       </div>
 
       <div className={`grid grid-cols-7 ${mode === 'week' ? 'min-h-72' : ''}`}>
@@ -183,14 +185,14 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
                     type="button"
                     className={`calendar-event w-full rounded-xl px-2 py-1.5 text-left text-xs ring-1 ${statusClass[leave.status] || statusClass.Pending}`}
                     onClick={() => setSelectedLeave(leave)}
-                    title={`${leave.employeeId?.fullName || 'Nhân viên'} - ${statusText[leave.status] || leave.status}`}
+                    title={`${leave.employeeId?.fullName || t('Nhân viên')} - ${t(statusText[leave.status] || leave.status)}`}
                   >
-                    <span>{leave.employeeId?.fullName || 'Nhân viên'}</span>
-                    <small>{leave.employeeId?.departmentId?.departmentName || 'Chưa có phòng ban'}</small>
+                    <span>{leave.employeeId?.fullName || t('Nhân viên')}</span>
+                    <small>{leave.employeeId?.departmentId?.departmentName || t('Chưa có phòng ban')}</small>
                   </button>
                 ))}
                 {dayLeaves.length > (mode === 'week' ? 4 : 2) && (
-                  <div className="px-1 text-xs font-semibold text-slate-500">+{dayLeaves.length - (mode === 'week' ? 4 : 2)} đơn khác</div>
+                  <div className="px-1 text-xs font-semibold text-slate-500">+{dayLeaves.length - (mode === 'week' ? 4 : 2)} {t('đơn khác')}</div>
                 )}
               </div>
             </div>
@@ -204,6 +206,7 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
 }
 
 function LeaveDetailModal({ leave, onClose }) {
+  const { locale, t } = useLanguage();
   if (!leave) return null;
 
   return (
@@ -212,19 +215,19 @@ function LeaveDetailModal({ leave, onClose }) {
         <div className="modal-fly modal-card w-full max-w-lg" onMouseDown={(event) => event.stopPropagation()}>
           <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[.14em] text-slate-400">Chi tiết nghỉ phép</p>
-              <h3 className="mt-1 text-xl font-bold text-ink">{leave.employeeId?.fullName || 'Nhân viên'}</h3>
+              <p className="text-xs font-bold uppercase tracking-[.14em] text-slate-400">{t('Chi tiết nghỉ phép')}</p>
+              <h3 className="mt-1 text-xl font-bold text-ink">{leave.employeeId?.fullName || t('Nhân viên')}</h3>
             </div>
-            <button type="button" className="btn-secondary shrink-0 px-2" onClick={onClose} aria-label="Đóng"><X size={18} /></button>
+            <button type="button" className="btn-secondary shrink-0 px-2" onClick={onClose} aria-label={t('Đóng')}><X size={18} /></button>
           </div>
           <div className="modal-body space-y-3">
-            <DetailRow icon={Building2} label="Phòng ban" value={leave.employeeId?.departmentId?.departmentName || 'Chưa cập nhật'} />
-            <DetailRow icon={CalendarDays} label="Ngày nghỉ" value={new Date(leave.leaveDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })} />
-            <DetailRow icon={FileText} label="Lý do" value={leave.reason || 'Không có lý do'} />
+            <DetailRow icon={Building2} label={t('Phòng ban')} value={leave.employeeId?.departmentId?.departmentName || t('Chưa cập nhật')} />
+            <DetailRow icon={CalendarDays} label={t('Ngày nghỉ')} value={new Date(leave.leaveDate).toLocaleDateString(locale, { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })} />
+            <DetailRow icon={FileText} label={t('Lý do')} value={leave.reason || t('Không có lý do')} />
             <DetailRow
               icon={UserRound}
-              label="Trạng thái"
-              value={<span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${statusClass[leave.status] || statusClass.Pending}`}>{statusText[leave.status] || leave.status}</span>}
+              label={t('Trạng thái')}
+              value={<span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${statusClass[leave.status] || statusClass.Pending}`}>{t(statusText[leave.status] || leave.status)}</span>}
             />
           </div>
         </div>

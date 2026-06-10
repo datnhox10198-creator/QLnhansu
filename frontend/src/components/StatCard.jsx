@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 const toneMap = {
   teal: {
@@ -35,15 +36,16 @@ const toneMap = {
 };
 
 export default function StatCard({ label, value, icon: Icon, tone = 'teal', note = 'Dữ liệu hiện tại', to }) {
+  const { t } = useLanguage();
   const style = toneMap[tone] || toneMap.teal;
   const content = (
     <>
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${style.glow} via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
       <div className="relative flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold text-slate-500">{label}</p>
+          <p className="text-xs font-semibold text-slate-500">{t(label)}</p>
           <p className="mt-3 text-4xl font-bold tracking-[-0.05em] text-slate-950">{value ?? 0}</p>
-          <p className="mt-2 text-xs font-medium text-slate-500">{note}</p>
+          <p className="mt-2 text-xs font-medium text-slate-500">{t(note)}</p>
         </div>
         <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${style.icon}`}>
           <Icon size={21} strokeWidth={2} />
@@ -51,7 +53,7 @@ export default function StatCard({ label, value, icon: Icon, tone = 'teal', note
       </div>
       {to && (
         <span className="stat-card-action">
-          Xem chi tiết <ArrowUpRight size={13} />
+          {t('Xem chi tiết')} <ArrowUpRight size={13} />
         </span>
       )}
       <div className="absolute inset-x-0 bottom-0 h-0.5 bg-slate-100">
@@ -61,6 +63,6 @@ export default function StatCard({ label, value, icon: Icon, tone = 'teal', note
   );
 
   return to
-    ? <Link to={to} className={`stat-card stat-card-link group ${style.skin}`} aria-label={`${label}: ${value ?? 0}. Xem chi tiết`}>{content}</Link>
+    ? <Link to={to} className={`stat-card stat-card-link group ${style.skin}`} aria-label={`${t(label)}: ${value ?? 0}. ${t('Xem chi tiết')}`}>{content}</Link>
     : <div className={`stat-card group ${style.skin}`}>{content}</div>;
 }

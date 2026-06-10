@@ -133,6 +133,45 @@ input, select, textarea {
   @apply grid h-9 w-9 shrink-0 place-items-center rounded-full text-slate-500 transition hover:bg-black/[0.04] hover:text-slate-900;
 }
 
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: .2rem;
+  border: 1px solid rgba(15, 23, 42, .1);
+  border-radius: .85rem;
+  background: rgba(255, 255, 255, .82);
+  padding: .22rem;
+  color: #64748b;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, .04);
+  backdrop-filter: blur(14px);
+}
+
+.language-switcher > svg {
+  margin: 0 .25rem 0 .35rem;
+}
+
+.language-switcher button {
+  border-radius: .62rem;
+  padding: .38rem .52rem;
+  font-size: .68rem;
+  font-weight: 750;
+  transition: .2s ease;
+}
+
+.language-switcher button:hover {
+  color: #0f172a;
+}
+
+.language-switcher button.is-active {
+  background: #0f172a;
+  color: white;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, .16);
+}
+
+.language-switcher-compact {
+  box-shadow: none;
+}
+
 .stat-card {
   @apply relative overflow-hidden rounded-[1.65rem] border bg-white/85 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
   border-color: rgba(0, 0, 0, 0.055);
