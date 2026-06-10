@@ -3,6 +3,7 @@ import {
   Bell,
   Building2,
   CalendarDays,
+  CheckCircle2,
   ChevronRight,
   ClipboardCheck,
   ClipboardList,
@@ -19,7 +20,7 @@ import {
   X
 } from 'lucide-react';
 import { useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const pageMeta = {
@@ -37,7 +38,10 @@ const pageMeta = {
 export default function Layout() {
   const { user, employee, logout } = useAuth();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notificationsSeen, setNotificationsSeen] = useState(false);
   const displayPosition = employee?.position || (user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên');
   const [pageTitle, pageDescription] = pageMeta[pathname] || pageMeta['/'];
   const links = user.role === 'admin'
@@ -59,6 +63,21 @@ export default function Layout() {
         ['/payroll', Banknote, 'Phiếu lương'],
         ['/leaves', CalendarDays, 'Nghỉ phép']
       ];
+  const notifications = user.role === 'admin'
+    ? [
+        { icon: CalendarDays, title: 'Kiểm tra đơn nghỉ phép', detail: 'Xem các yêu cầu đang chờ xử lý.', to: '/leaves', tone: 'blue' },
+        { icon: ClipboardCheck, title: 'Theo dõi công việc', detail: 'Kiểm tra tiến độ công việc của đội ngũ.', to: '/tasks', tone: 'violet' }
+      ]
+    : [
+        { icon: ClipboardCheck, title: 'Công việc của bạn', detail: 'Xem và cập nhật tiến độ hôm nay.', to: '/tasks', tone: 'blue' },
+        { icon: CheckCircle2, title: 'Chấm công hôm nay', detail: 'Kiểm tra trạng thái check-in và check-out.', to: '/attendance', tone: 'green' }
+      ];
+
+  const openNotification = (to) => {
+    setNotificationsOpen(false);
+    setNotificationsSeen(true);
+    navigate(to);
+  };
 
   const NavContent = () => (
     <div className="flex h-full flex-col">
@@ -153,10 +172,47 @@ export default function Layout() {
                 <span className="w-40">Tìm kiếm nhanh...</span>
                 <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px]">Ctrl K</kbd>
               </div>
-              <button className="icon-button relative" aria-label="Thông báo">
-                <Bell size={18} />
-                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-orange-500 ring-2 ring-white" />
-              </button>
+              <div className="relative">
+                <button
+                  className={`icon-button relative ${notificationsOpen ? 'bg-blue-50 text-blue-600' : ''}`}
+                  aria-label="Thông báo"
+                  aria-expanded={notificationsOpen}
+                  onClick={() => {
+                    setNotificationsOpen((value) => !value);
+                    setNotificationsSeen(true);
+                  }}
+                >
+                  <Bell size={18} />
+                  {!notificationsSeen && <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-orange-500 ring-2 ring-white" />}
+                </button>
+
+                {notificationsOpen && (
+                  <>
+                    <button className="fixed inset-0 z-30 cursor-default" onClick={() => setNotificationsOpen(false)} aria-label="Đóng thông báo" />
+                    <div className="notification-panel absolute right-0 top-12 z-40 w-[min(22rem,calc(100vw-2rem))]">
+                      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                        <div>
+                          <p className="text-sm font-semibold text-slate-900">Thông báo</p>
+                          <p className="text-xs text-slate-400">Các việc bạn có thể cần xử lý</p>
+                        </div>
+                        <span className="rounded-full bg-blue-50 px-2 py-1 text-[10px] font-semibold text-blue-600">{notifications.length} mục</span>
+                      </div>
+                      <div className="p-2">
+                        {notifications.map(({ icon: Icon, title, detail, to, tone }) => (
+                          <button key={to} className="notification-item" onClick={() => openNotification(to)}>
+                            <span className={`notification-icon notification-icon-${tone}`}><Icon size={17} /></span>
+                            <span className="min-w-0 text-left">
+                              <span className="block text-sm font-semibold text-slate-800">{title}</span>
+                              <span className="mt-0.5 block text-xs leading-5 text-slate-500">{detail}</span>
+                            </span>
+                            <ChevronRight className="ml-auto shrink-0 text-slate-300" size={15} />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
               <div className="hidden items-center gap-2.5 border-l border-slate-200 pl-3 sm:flex">
                 <div className="avatar-pop grid h-9 w-9 place-items-center rounded-xl text-sm font-extrabold text-slate-950">{user.fullName?.charAt(0)}</div>
                 <div className="hidden lg:block">

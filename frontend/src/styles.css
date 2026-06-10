@@ -230,6 +230,28 @@ input, select, textarea {
   box-shadow: 0 0 0 4px rgba(52, 199, 89, 0.12);
 }
 
+.notification-panel {
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 20px 60px rgba(30, 41, 59, 0.16);
+  backdrop-filter: blur(24px) saturate(170%);
+  animation: notification-in 180ms ease-out both;
+}
+
+.notification-item {
+  @apply flex w-full items-center gap-3 rounded-2xl px-3 py-3 transition hover:bg-slate-50;
+}
+
+.notification-icon {
+  @apply grid h-9 w-9 shrink-0 place-items-center rounded-xl;
+}
+
+.notification-icon-blue { @apply bg-blue-50 text-blue-600; }
+.notification-icon-violet { @apply bg-violet-50 text-violet-600; }
+.notification-icon-green { @apply bg-emerald-50 text-emerald-600; }
+
 .avatar-pop {
   background: linear-gradient(145deg, #dbeafe, #ddd6fe);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
@@ -406,6 +428,17 @@ main h1.text-2xl + p {
   from {
     opacity: 0;
     transform: translateY(22px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes notification-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
   }
   to {
     opacity: 1;
