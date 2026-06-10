@@ -12,8 +12,10 @@ import {
   Menu,
   Search,
   ShieldCheck,
+  Sparkles,
   UserRound,
   UsersRound,
+  Zap,
   X
 } from 'lucide-react';
 import { useState } from 'react';
@@ -66,8 +68,8 @@ export default function Layout() {
             <ShieldCheck size={22} strokeWidth={2.4} />
           </div>
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-300">People OS</p>
-            <p className="mt-0.5 text-xl font-bold tracking-tight text-white">Nexora HR</p>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-lime-300">Work. Play. Grow.</p>
+            <p className="mt-0.5 text-xl font-extrabold tracking-tight text-white">Nexora</p>
           </div>
         </div>
         <button className="icon-button-dark lg:hidden" onClick={() => setOpen(false)} aria-label="Đóng menu">
@@ -76,7 +78,7 @@ export default function Layout() {
       </div>
 
       <div className="px-4 pt-6">
-        <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">Không gian làm việc</p>
+        <p className="mb-3 px-3 text-[10px] font-extrabold uppercase tracking-[0.22em] text-violet-300/60">Your space</p>
         <nav className="space-y-1.5">
           {links.map(([to, Icon, label]) => (
             <NavLink
@@ -97,7 +99,7 @@ export default function Layout() {
       <div className="mt-auto p-4">
         <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-400 font-bold text-slate-950">
+            <div className="avatar-pop grid h-10 w-10 shrink-0 place-items-center rounded-xl font-extrabold text-slate-950">
               {user.fullName?.charAt(0)}
             </div>
             <div className="min-w-0 flex-1">
@@ -109,7 +111,7 @@ export default function Layout() {
             </button>
           </div>
         </div>
-        <p className="mt-3 text-center text-[10px] tracking-wider text-slate-600">HRMS PLATFORM · 2026</p>
+        <p className="mt-3 text-center text-[10px] font-bold tracking-wider text-violet-300/40">BUILD YOUR BEST WORK ✦</p>
       </div>
     </div>
   );
@@ -133,7 +135,7 @@ export default function Layout() {
             </button>
             <div className="min-w-0">
               <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
-                <span>HRMS</span><ChevronRight size={12} /><span>{pageTitle}</span>
+                <span>Nexora</span><ChevronRight size={12} /><span>{pageTitle}</span>
               </div>
               <div className="mt-0.5 flex items-baseline gap-3">
                 <h1 className="truncate text-lg font-bold tracking-tight text-slate-900">{pageTitle}</h1>
@@ -141,6 +143,11 @@ export default function Layout() {
               </div>
             </div>
             <div className="ml-auto flex items-center gap-2">
+              <div className="status-pill hidden md:flex">
+                <span className="status-dot" />
+                <span>All systems vibing</span>
+                <Sparkles size={13} />
+              </div>
               <div className="hidden items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-400 xl:flex">
                 <Search size={15} />
                 <span className="w-40">Tìm kiếm nhanh...</span>
@@ -151,7 +158,7 @@ export default function Layout() {
                 <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-orange-500 ring-2 ring-white" />
               </button>
               <div className="hidden items-center gap-2.5 border-l border-slate-200 pl-3 sm:flex">
-                <div className="grid h-9 w-9 place-items-center rounded-xl bg-slate-900 text-sm font-bold text-white">{user.fullName?.charAt(0)}</div>
+                <div className="avatar-pop grid h-9 w-9 place-items-center rounded-xl text-sm font-extrabold text-slate-950">{user.fullName?.charAt(0)}</div>
                 <div className="hidden lg:block">
                   <p className="max-w-36 truncate text-xs font-semibold text-slate-800">{user.fullName}</p>
                   <p className="text-[11px] text-slate-400">{displayPosition}</p>
@@ -163,6 +170,9 @@ export default function Layout() {
 
         <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto max-w-[1480px]">
+            <div className="mb-5 flex items-center gap-2 text-xs font-bold text-violet-600 lg:hidden">
+              <Zap size={14} fill="currentColor" /> Let&apos;s make today count
+            </div>
             <Outlet />
           </div>
         </main>

@@ -1,4 +1,4 @@
-import { ArrowRight, BarChart3, CheckCircle2, Eye, EyeOff, LockKeyhole, ShieldCheck, Sparkles, UsersRound } from 'lucide-react';
+import { ArrowRight, BarChart3, CheckCircle2, Eye, EyeOff, Flame, LockKeyhole, ShieldCheck, Sparkles, UsersRound } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
@@ -33,27 +33,27 @@ export default function Login() {
           <div className="relative z-10 flex items-center gap-3">
             <div className="brand-mark"><ShieldCheck size={22} /></div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-300">People OS</p>
-              <p className="text-xl font-bold text-white">Nexora HR</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-lime-300">Work. Play. Grow.</p>
+              <p className="text-xl font-extrabold text-white">Nexora</p>
             </div>
           </div>
 
           <div className="relative z-10 my-auto max-w-xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold text-emerald-200">
-              <Sparkles size={14} /> Quản trị nhân sự thế hệ mới
+            <div className="login-badge">
+              <Sparkles size={14} /> Built for the next-gen team
             </div>
-            <h1 className="text-5xl font-bold leading-[1.08] tracking-[-0.04em] text-white xl:text-6xl">
-              Con người tốt hơn.<br />
-              <span className="text-emerald-300">Doanh nghiệp mạnh hơn.</span>
+            <h1 className="text-5xl font-extrabold leading-[1.03] tracking-[-0.055em] text-white xl:text-6xl">
+              Work less messy.<br />
+              <span className="login-highlight">Grow more happy.</span>
             </h1>
             <p className="mt-6 max-w-lg text-base leading-7 text-slate-300">
-              Một không gian tập trung để quản lý nhân sự, công việc, chấm công và thu nhập. Rõ ràng cho quản lý, thuận tiện cho nhân viên.
+              Team, task, chấm công và lương thưởng trong một space duy nhất. Đủ nhanh cho Gen Z, đủ rõ cho cả công ty.
             </p>
 
             <div className="mt-10 grid grid-cols-3 gap-3">
-              <Feature icon={UsersRound} value="360°" label="Hồ sơ nhân sự" />
-              <Feature icon={BarChart3} value="Realtime" label="Số liệu vận hành" />
-              <Feature icon={CheckCircle2} value="1 nơi" label="Mọi quy trình" />
+              <Feature icon={UsersRound} value="360°" label="Team view" color="lime" />
+              <Feature icon={BarChart3} value="Live" label="Real insights" color="violet" />
+              <Feature icon={CheckCircle2} value="1 tap" label="Quick actions" color="coral" />
             </div>
           </div>
 
@@ -66,21 +66,21 @@ export default function Login() {
               <div className="flex items-center gap-3">
                 <div className="brand-mark"><ShieldCheck size={22} /></div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-emerald-700">People OS</p>
-                  <p className="text-xl font-bold text-slate-900">Nexora HR</p>
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-violet-600">Work. Play. Grow.</p>
+                  <p className="text-xl font-extrabold text-slate-900">Nexora</p>
                 </div>
               </div>
             </div>
 
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">Chào mừng trở lại</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-[-0.03em] text-slate-950 sm:text-4xl">Đăng nhập hệ thống</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-500">Sử dụng tài khoản được cấp để truy cập không gian làm việc của bạn.</p>
+            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.18em] text-violet-600"><Flame size={15} /> Welcome back</div>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.045em] text-slate-950 sm:text-4xl">Ready to make moves?</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-500">Đăng nhập và bắt đầu một ngày làm việc thật gọn.</p>
 
             {error && <div className="mt-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>}
 
             <div className="mt-8 space-y-5">
               <label className="block text-sm font-semibold text-slate-700">
-                Email công việc
+                Work email
                 <input
                   type="email"
                   className="field mt-2"
@@ -91,7 +91,7 @@ export default function Login() {
                 />
               </label>
               <label className="block text-sm font-semibold text-slate-700">
-                Mật khẩu
+                Password
                 <span className="relative mt-2 block">
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -113,7 +113,7 @@ export default function Login() {
             </div>
 
             <button className="btn-primary mt-7 w-full py-3.5" disabled={loading}>
-              {loading ? <><LockKeyhole className="animate-pulse" size={17} /> Đang xác thực...</> : <>Vào không gian làm việc <ArrowRight size={17} /></>}
+              {loading ? <><LockKeyhole className="animate-pulse" size={17} /> Đang kết nối...</> : <>Let&apos;s go <ArrowRight size={17} /></>}
             </button>
 
             <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
@@ -127,10 +127,10 @@ export default function Login() {
   );
 }
 
-function Feature({ icon: Icon, value, label }) {
+function Feature({ icon: Icon, value, label, color }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur">
-      <Icon className="mb-5 text-emerald-300" size={20} />
+    <div className={`login-feature login-feature-${color}`}>
+      <Icon className="mb-5" size={20} />
       <p className="text-lg font-bold text-white">{value}</p>
       <p className="mt-1 text-xs text-slate-400">{label}</p>
     </div>

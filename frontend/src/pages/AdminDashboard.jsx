@@ -1,4 +1,4 @@
-import { ArrowUpRight, Building2, CalendarCheck, CalendarClock, CalendarDays, UsersRound } from 'lucide-react';
+import { ArrowUpRight, Building2, CalendarCheck, CalendarClock, CalendarDays, Flame, Sparkles, UsersRound } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/client';
@@ -28,19 +28,19 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <section className="dashboard-hero">
         <div className="relative z-10 max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">{today}</p>
+          <div className="hero-kicker"><Sparkles size={14} /> {today}</div>
           <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-white sm:text-4xl">
-            Chào {user?.fullName?.split(' ').slice(-1)[0]}, mọi thứ đang vận hành tốt.
+            Hey {user?.fullName?.split(' ').slice(-1)[0]}, team mình đang <span className="hero-highlight">on fire.</span>
           </h2>
           <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">
-            Theo dõi biến động nhân sự, tiến độ xử lý đơn và các hoạt động quan trọng từ một màn hình duy nhất.
+            Mọi tín hiệu nhân sự quan trọng đều ở đây. Nhanh, rõ và không còn những bảng dữ liệu nhàm chán.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link to="/employees" className="btn bg-emerald-400 text-slate-950 hover:bg-emerald-300">
-              Quản lý nhân viên <ArrowUpRight size={16} />
+            <Link to="/employees" className="btn hero-primary">
+              Vào team hub <ArrowUpRight size={16} />
             </Link>
-            <Link to="/reports" className="btn border border-white/15 bg-white/10 text-white hover:bg-white/15">
-              Xem báo cáo
+            <Link to="/reports" className="btn hero-secondary">
+              <Flame size={16} /> Xem insight
             </Link>
           </div>
         </div>
@@ -49,11 +49,11 @@ export default function AdminDashboard() {
             <div className="grid h-[106px] w-[106px] place-items-center rounded-full bg-slate-900">
               <div className="text-center">
                 <p className="text-3xl font-bold text-white">{approvalRate}%</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wider text-slate-400">Đã xử lý</p>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-violet-200">Done rate</p>
               </div>
             </div>
           </div>
-          <p className="mt-4 text-center text-xs text-slate-400">{stats.pendingLeaves ?? 0} đơn đang chờ duyệt</p>
+          <p className="mt-4 text-center text-xs font-semibold text-violet-100">{stats.pendingLeaves ?? 0} request đang chờ bạn</p>
         </div>
       </section>
 

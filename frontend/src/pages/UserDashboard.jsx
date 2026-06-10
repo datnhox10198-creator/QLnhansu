@@ -1,4 +1,4 @@
-import { ArrowUpRight, CalendarCheck, CalendarClock, CalendarDays, UserRound, XCircle } from 'lucide-react';
+import { ArrowUpRight, CalendarCheck, CalendarClock, CalendarDays, Sparkles, UserRound, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/client';
@@ -15,17 +15,17 @@ export default function UserDashboard() {
     <div className="space-y-6">
       <section className="dashboard-hero dashboard-hero-user">
         <div className="relative z-10 max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-300">Không gian cá nhân</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-white sm:text-4xl">Xin chào, {user?.fullName}</h2>
+          <div className="hero-kicker"><Sparkles size={14} /> Your daily space</div>
+          <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-white sm:text-4xl">Hey {user?.fullName}, <span className="hero-highlight">let&apos;s glow.</span></h2>
           <p className="mt-3 text-sm leading-6 text-slate-300">
             {employee?.position} · {employee?.departmentId?.departmentName || 'Chưa phân phòng ban'}
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <Link to="/leaves" className="btn bg-emerald-400 text-slate-950 hover:bg-emerald-300">
-              Tạo đơn nghỉ phép <ArrowUpRight size={16} />
+            <Link to="/leaves" className="btn hero-primary">
+              Xin nghỉ phép <ArrowUpRight size={16} />
             </Link>
-            <Link to="/profile" className="btn border border-white/15 bg-white/10 text-white hover:bg-white/15">
-              <UserRound size={16} /> Hồ sơ của tôi
+            <Link to="/profile" className="btn hero-secondary">
+              <UserRound size={16} /> My profile
             </Link>
           </div>
         </div>
