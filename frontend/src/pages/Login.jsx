@@ -33,8 +33,8 @@ export default function Login() {
           <div className="relative z-10 flex items-center gap-3">
             <div className="brand-mark"><ShieldCheck size={22} /></div>
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">People workspace</p>
-              <p className="text-xl font-extrabold text-slate-800">Nexora</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Quản lý nhân sự</p>
+              <p className="text-xl font-extrabold text-slate-800">HRMS</p>
             </div>
           </div>
 
@@ -57,7 +57,7 @@ export default function Login() {
             </div>
           </div>
 
-          <p className="relative z-10 text-xs text-slate-500">Nexora Human Resources Management System</p>
+          <p className="relative z-10 text-xs text-slate-500">Human Resources Management System</p>
         </section>
 
         <section className="flex items-center justify-center bg-[#f8faf9] px-5 py-10 sm:px-10 lg:px-16">
@@ -66,8 +66,8 @@ export default function Login() {
               <div className="flex items-center gap-3">
                 <div className="brand-mark"><ShieldCheck size={22} /></div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">People workspace</p>
-                  <p className="text-xl font-extrabold text-slate-900">Nexora</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Quản lý nhân sự</p>
+                  <p className="text-xl font-extrabold text-slate-900">HRMS</p>
                 </div>
               </div>
             </div>

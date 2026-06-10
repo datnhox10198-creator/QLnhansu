@@ -68,8 +68,8 @@ export default function Layout() {
             <ShieldCheck size={22} strokeWidth={2.4} />
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">People workspace</p>
-            <p className="mt-0.5 text-xl font-extrabold tracking-tight text-slate-800">Nexora</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">Quản lý nhân sự</p>
+            <p className="mt-0.5 text-xl font-extrabold tracking-tight text-slate-800">HRMS</p>
           </div>
         </div>
         <button className="icon-button-dark lg:hidden" onClick={() => setOpen(false)} aria-label="Đóng menu">
@@ -111,7 +111,7 @@ export default function Layout() {
             </button>
           </div>
         </div>
-        <p className="mt-3 text-center text-[10px] font-semibold tracking-wider text-slate-400">NEXORA · PEOPLE OS</p>
+        <p className="mt-3 text-center text-[10px] font-semibold tracking-wider text-slate-400">HUMAN RESOURCE SYSTEM</p>
       </div>
     </div>
   );
@@ -135,7 +135,7 @@ export default function Layout() {
             </button>
             <div className="min-w-0">
               <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
-                <span>Nexora</span><ChevronRight size={12} /><span>{pageTitle}</span>
+                <span>HRMS</span><ChevronRight size={12} /><span>{pageTitle}</span>
               </div>
               <div className="mt-0.5 flex items-baseline gap-3">
                 <h1 className="truncate text-lg font-bold tracking-tight text-slate-900">{pageTitle}</h1>
