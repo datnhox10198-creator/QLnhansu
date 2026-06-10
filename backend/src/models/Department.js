@@ -4,6 +4,12 @@ const departmentSchema = new mongoose.Schema(
   {
     departmentName: { type: String, required: true, unique: true, trim: true },
     description: { type: String, trim: true },
+    translations: {
+      en: {
+        departmentName: { type: String, trim: true },
+        description: { type: String, trim: true }
+      }
+    },
     managerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', default: null }
   },
   { timestamps: true }

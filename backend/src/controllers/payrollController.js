@@ -11,7 +11,8 @@ const toPayrollLine = (employee) => {
     department: employee.departmentId
       ? {
           _id: employee.departmentId._id,
-          departmentName: employee.departmentId.departmentName
+          departmentName: employee.departmentId.departmentName,
+          translations: employee.departmentId.translations
         }
       : null,
     baseSalary,
@@ -54,6 +55,7 @@ export const departmentPayrollSummary = async (req, res) => {
     return {
       departmentId: department._id,
       departmentName: department.departmentName,
+      translations: department.translations,
       employeeCount: payroll.length,
       managerCount,
       totalSalary,

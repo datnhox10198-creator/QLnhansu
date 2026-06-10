@@ -6,6 +6,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import DataTable from '../components/DataTable';
 import ModalPortal from '../components/ModalPortal';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { date } from '../utils/format';
 
 const emptyForm = { employeeId: '', leaveDate: '', reason: '' };
@@ -25,6 +26,7 @@ const statusFilters = [
 
 export default function Leaves() {
   const { user, employee } = useAuth();
+  const { t, td } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [leaves, setLeaves] = useState([]);
   const [employees, setEmployees] = useState([]);
@@ -96,14 +98,14 @@ export default function Leaves() {
 
   const badge = (status) => {
     const cls = status === 'Approved' ? 'bg-teal-50 text-teal-700' : status === 'Rejected' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700';
-    return <span className={`rounded-2xl px-2 py-1 text-xs font-semibold ${cls}`}>{statusText[status] || status}</span>;
+    return <span className={`rounded-2xl px-2 py-1 text-xs font-semibold ${cls}`}>{t(statusText[status] || status)}</span>;
   };
 
   const columns = [
     { key: 'employee', label: 'Nhân viên', render: (row) => row.employeeId?.fullName },
-    { key: 'department', label: 'Phòng ban', render: (row) => row.employeeId?.departmentId?.departmentName },
+    { key: 'department', label: 'Phòng ban', render: (row) => td(row.employeeId?.departmentId?.departmentName, row.employeeId?.departmentId?.translations, 'departmentName') },
     { key: 'leaveDate', label: 'Ngày nghỉ', render: (row) => date(row.leaveDate) },
-    { key: 'reason', label: 'Lý do' },
+    { key: 'reason', label: 'Lý do', render: (row) => td(row.reason, row.translations, 'reason') },
     { key: 'status', label: 'Trạng thái', render: (row) => badge(row.status) },
     { key: 'actions', label: '', render: (row) => (
       <div className="flex gap-2">
@@ -151,7 +153,7 @@ export default function Leaves() {
               onClick={() => setSearchParams(value === 'All' ? {} : { status: value })}
               aria-pressed={statusFilter === value}
             >
-              {label} <span>{count}</span>
+              {t(label)} <span>{count}</span>
             </button>
           );
         })}

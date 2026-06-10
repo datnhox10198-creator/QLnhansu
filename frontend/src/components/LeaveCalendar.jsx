@@ -44,7 +44,7 @@ const statusText = {
 const statusOptions = ['All', 'Approved', 'Pending', 'Rejected'];
 
 export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
-  const { language, locale, t } = useLanguage();
+  const { language, locale, t, td } = useLanguage();
   const [mode, setMode] = useState('week');
   const [cursor, setCursor] = useState(new Date());
   const [leaves, setLeaves] = useState([]);
@@ -188,7 +188,7 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
                     title={`${leave.employeeId?.fullName || t('Nhân viên')} - ${t(statusText[leave.status] || leave.status)}`}
                   >
                     <span>{leave.employeeId?.fullName || t('Nhân viên')}</span>
-                    <small>{leave.employeeId?.departmentId?.departmentName || t('Chưa có phòng ban')}</small>
+                    <small>{td(leave.employeeId?.departmentId?.departmentName, leave.employeeId?.departmentId?.translations, 'departmentName') || t('Chưa có phòng ban')}</small>
                   </button>
                 ))}
                 {dayLeaves.length > (mode === 'week' ? 4 : 2) && (
@@ -206,7 +206,7 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
 }
 
 function LeaveDetailModal({ leave, onClose }) {
-  const { locale, t } = useLanguage();
+  const { locale, t, td } = useLanguage();
   if (!leave) return null;
 
   return (
@@ -221,9 +221,9 @@ function LeaveDetailModal({ leave, onClose }) {
             <button type="button" className="btn-secondary shrink-0 px-2" onClick={onClose} aria-label={t('Đóng')}><X size={18} /></button>
           </div>
           <div className="modal-body space-y-3">
-            <DetailRow icon={Building2} label={t('Phòng ban')} value={leave.employeeId?.departmentId?.departmentName || t('Chưa cập nhật')} />
+            <DetailRow icon={Building2} label={t('Phòng ban')} value={td(leave.employeeId?.departmentId?.departmentName, leave.employeeId?.departmentId?.translations, 'departmentName') || t('Chưa cập nhật')} />
             <DetailRow icon={CalendarDays} label={t('Ngày nghỉ')} value={new Date(leave.leaveDate).toLocaleDateString(locale, { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })} />
-            <DetailRow icon={FileText} label={t('Lý do')} value={leave.reason || t('Không có lý do')} />
+            <DetailRow icon={FileText} label={t('Lý do')} value={leave.reason ? td(leave.reason, leave.translations, 'reason') : t('Không có lý do')} />
             <DetailRow
               icon={UserRound}
               label={t('Trạng thái')}

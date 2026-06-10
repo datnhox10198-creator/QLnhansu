@@ -1,6 +1,7 @@
 import Employee from '../models/Employee.js';
 import Department from '../models/Department.js';
 import LeaveRequest from '../models/LeaveRequest.js';
+import { ensureEnglishTranslation, translateFields, translateToEnglish } from '../utils/translation.js';
 
 const getApprovalContext = async (user) => {
   const employee = await Employee.findOne({ userId: user._id });
@@ -38,6 +39,7 @@ export const listLeaves = async (req, res) => {
   const leaves = await LeaveRequest.find(filter)
     .populate({ path: 'employeeId', populate: { path: 'departmentId', populate: { path: 'managerId' } } })
     .sort({ createdAt: -1 });
+  await Promise.all(leaves.map((leave) => ensureEnglishTranslation(leave, ['reason'])));
 
   res.json(leaves.map((leave) => ({
     ...leave.toObject(),
@@ -55,7 +57,8 @@ export const createLeave = async (req, res) => {
   const leave = await LeaveRequest.create({
     employeeId: employee._id,
     leaveDate: req.body.leaveDate,
-    reason: req.body.reason
+    reason: req.body.reason,
+    translations: { en: await translateFields(req.body, ['reason']) }
   });
 
   res.status(201).json(await leave.populate('employeeId'));
@@ -69,6 +72,7 @@ export const updateLeave = async (req, res) => {
     leave.status = req.body.status ?? leave.status;
     leave.leaveDate = req.body.leaveDate ?? leave.leaveDate;
     leave.reason = req.body.reason ?? leave.reason;
+    if (req.body.reason) leave.set('translations.en.reason', await translateToEnglish(req.body.reason));
   } else {
     const context = await getApprovalContext(req.user);
     const isManagerOfLeave = canApproveLeave(leave, req.user, context.managedEmployeeIds);
@@ -85,6 +89,7 @@ export const updateLeave = async (req, res) => {
     }
     leave.leaveDate = req.body.leaveDate ?? leave.leaveDate;
     leave.reason = req.body.reason ?? leave.reason;
+    if (req.body.reason) leave.set('translations.en.reason', await translateToEnglish(req.body.reason));
   }
 
   await leave.save();

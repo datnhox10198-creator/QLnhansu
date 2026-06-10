@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
 import ModalPortal from '../components/ModalPortal';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { date, isoDate } from '../utils/format';
 
 const baseForm = () => ({
@@ -27,6 +28,7 @@ const statusClass = {
 
 export default function Tasks() {
   const { user, employee } = useAuth();
+  const { t, td } = useLanguage();
   const isAdmin = user?.role === 'admin';
   const [context, setContext] = useState({ team: [], departments: [], managedDepartment: null });
   const [data, setData] = useState({ items: [], canManage: false, adminMode: false });
@@ -137,7 +139,7 @@ export default function Tasks() {
             {isAdmin
               ? 'Admin giao việc cho phòng ban, hệ thống chỉ gửi tới trưởng phòng.'
               : data.canManage
-                ? `Giao việc cho nhân viên phòng ${context.managedDepartment?.departmentName || ''}.`
+                ? `${t('Giao việc')} ${td(context.managedDepartment?.departmentName, context.managedDepartment?.translations, 'departmentName')}.`
                 : 'Theo dõi và cập nhật trạng thái công việc được giao.'}
           </p>
         </div>
@@ -170,6 +172,8 @@ export default function Tasks() {
             <TaskCard
               key={task._id}
               task={task}
+              td={td}
+              t={t}
               currentEmployeeId={employee?._id}
               updatingTaskId={updatingTaskId}
               onOpen={() => setSelectedTask(task)}
@@ -208,6 +212,7 @@ export default function Tasks() {
 }
 
 function TaskFormModal({ open, form, setForm, isAdmin, team, departments, saving, onClose, onSubmit }) {
+  const { t, td } = useLanguage();
   if (!open) return null;
   return (
     <ModalPortal>
@@ -228,6 +233,8 @@ function TaskFormModal({ open, form, setForm, isAdmin, team, departments, saving
           isAdmin={isAdmin}
           team={team}
           departments={departments}
+          t={t}
+          td={td}
           saving={saving}
           onClose={onClose}
           onSubmit={onSubmit}
@@ -238,7 +245,7 @@ function TaskFormModal({ open, form, setForm, isAdmin, team, departments, saving
   );
 }
 
-function TaskFormContent({ form, setForm, isAdmin, team, departments, saving, onClose, onSubmit }) {
+function TaskFormContent({ form, setForm, isAdmin, team, departments, saving, onClose, onSubmit, t, td }) {
   const selectedEmployeeIds = useMemo(() => new Set(form.assignedEmployeeIds), [form.assignedEmployeeIds]);
   const selectedDepartmentIds = useMemo(() => new Set(form.departmentIds), [form.departmentIds]);
 
@@ -277,7 +284,7 @@ function TaskFormContent({ form, setForm, isAdmin, team, departments, saving, on
               <label key={department._id} className="flex min-h-12 items-center gap-3 rounded-2xl border border-slate-200 px-3 py-2 text-sm">
                 <input type="checkbox" checked={selectedDepartmentIds.has(department._id)} onChange={() => toggleDepartment(department._id)} />
                 <span className="min-w-0">
-                  <span className="block truncate font-semibold text-ink">{department.departmentName}</span>
+                  <span className="block truncate font-semibold text-ink">{td(department.departmentName, department.translations, 'departmentName')}</span>
                   <span className="block truncate text-xs text-slate-500">Trưởng phòng: {department.managerId?.fullName}</span>
                 </span>
               </label>
@@ -314,7 +321,7 @@ function TaskFormContent({ form, setForm, isAdmin, team, departments, saving, on
   );
 }
 
-function TaskCard({ task, currentEmployeeId, updatingTaskId, onOpen, onStatus }) {
+function TaskCard({ task, currentEmployeeId, updatingTaskId, onOpen, onStatus, t, td }) {
   const currentAssignee = task.assignees.find((assignee) => assignee.employeeId?._id === currentEmployeeId);
   const updating = updatingTaskId === task._id;
 
@@ -322,17 +329,17 @@ function TaskCard({ task, currentEmployeeId, updatingTaskId, onOpen, onStatus })
     <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="truncate text-lg font-bold text-ink">{task.title}</p>
-          <p className="text-sm text-slate-500">{date(task.workDate)} - {task.departmentId?.departmentName}</p>
+          <p className="truncate text-lg font-bold text-ink">{td(task.title, task.translations, 'title')}</p>
+          <p className="text-sm text-slate-500">{date(task.workDate)} - {td(task.departmentId?.departmentName, task.departmentId?.translations, 'departmentName')}</p>
         </div>
         {task.totalAssignees >= 2 ? <ProgressCircle value={task.progress} /> : null}
       </div>
 
-      <p className="mt-3 line-clamp-2 text-sm text-slate-600">{task.description}</p>
+      <p className="mt-3 line-clamp-2 text-sm text-slate-600">{td(task.description, task.translations, 'description')}</p>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <span className="inline-flex items-center gap-2 rounded-2xl bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-          <UsersRound size={14} /> {task.source === 'Admin' ? 'Trưởng phòng' : `${task.totalAssignees} người làm`}
+          <UsersRound size={14} /> {task.source === 'Admin' ? t('Trưởng phòng') : `${task.totalAssignees} ${t('người làm')}`}
         </span>
         {currentAssignee && (
           <span className={`rounded-2xl px-2.5 py-1 text-xs font-semibold ${statusClass[currentAssignee.status]}`}>
@@ -361,6 +368,7 @@ function TaskCard({ task, currentEmployeeId, updatingTaskId, onOpen, onStatus })
 }
 
 function TaskDetailModal({ task, currentEmployeeId, updatingTaskId, onClose, onStatus }) {
+  const { t, td } = useLanguage();
   if (!task) return null;
   const currentAssignee = task.assignees.find((assignee) => assignee.employeeId?._id === currentEmployeeId);
   const updating = updatingTaskId === task._id;
@@ -371,8 +379,8 @@ function TaskDetailModal({ task, currentEmployeeId, updatingTaskId, onClose, onS
       <div className="modal-fly modal-card w-full max-w-3xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div className="min-w-0">
-            <h2 className="truncate text-lg font-bold text-ink">{task.title}</h2>
-            <p className="text-sm text-slate-500">{date(task.workDate)} - {task.departmentId?.departmentName}</p>
+            <h2 className="truncate text-lg font-bold text-ink">{td(task.title, task.translations, 'title')}</h2>
+            <p className="text-sm text-slate-500">{date(task.workDate)} - {td(task.departmentId?.departmentName, task.departmentId?.translations, 'departmentName')}</p>
           </div>
           <button className="btn-secondary px-2" onClick={onClose} aria-label="Đóng">
             <X size={18} />
@@ -383,7 +391,7 @@ function TaskDetailModal({ task, currentEmployeeId, updatingTaskId, onClose, onS
           <div className="grid gap-4 md:grid-cols-[1fr_120px]">
             <div>
               <p className="mb-2 text-sm font-semibold text-slate-700">Chi tiết công việc</p>
-              <p className="whitespace-pre-wrap rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">{task.description}</p>
+              <p className="whitespace-pre-wrap rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">{td(task.description, task.translations, 'description')}</p>
             </div>
             {task.totalAssignees >= 2 && (
               <div className="flex items-center justify-center rounded-2xl border border-slate-200 p-3">
@@ -411,7 +419,7 @@ function TaskDetailModal({ task, currentEmployeeId, updatingTaskId, onClose, onS
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-5 py-4">
-          <span className="text-sm text-slate-500">{task.doneCount}/{task.totalAssignees} người đã làm xong</span>
+          <span className="text-sm text-slate-500">{task.doneCount}/{task.totalAssignees} {t('người đã làm xong')}</span>
           {currentAssignee && currentAssignee.status !== 'Done' && (
             <div className="flex gap-2">
               <button className="btn-secondary" disabled={updating} onClick={() => onStatus(task._id, 'Doing')}>

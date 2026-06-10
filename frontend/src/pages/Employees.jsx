@@ -4,12 +4,14 @@ import api from '../api/client';
 import ConfirmModal from '../components/ConfirmModal';
 import DataTable from '../components/DataTable';
 import ModalPortal from '../components/ModalPortal';
+import { useLanguage } from '../context/LanguageContext';
 import { isoDate, money } from '../utils/format';
 
 const positions = ['Nhân sự', 'Trưởng phòng'];
 const empty = { employeeCode: '', fullName: '', gender: 'Male', birthDate: '', phone: '', email: '', address: '', position: 'Nhân sự', salary: '', departmentId: '', status: 'Active' };
 
 export default function Employees() {
+  const { t, td } = useLanguage();
   const [departments, setDepartments] = useState([]);
   const [data, setData] = useState({ items: [], page: 1, pages: 1 });
   const [query, setQuery] = useState({ search: '', departmentId: '', page: 1 });
@@ -88,8 +90,8 @@ export default function Employees() {
   const columns = [
     { key: 'employeeCode', label: 'Mã NV' },
     { key: 'fullName', label: 'Họ tên' },
-    { key: 'department', label: 'Phòng ban', render: (row) => row.departmentId?.departmentName },
-    { key: 'position', label: 'Chức vụ' },
+    { key: 'department', label: 'Phòng ban', render: (row) => td(row.departmentId?.departmentName, row.departmentId?.translations, 'departmentName') },
+    { key: 'position', label: 'Chức vụ', render: (row) => t(row.position) },
     { key: 'salary', label: 'Lương', render: (row) => money(row.salary) },
     { key: 'actions', label: '', render: (row) => (
       <div className="flex gap-2">
@@ -125,7 +127,7 @@ export default function Employees() {
         <input className="field" placeholder="Tìm theo tên nhân viên" value={query.search} onChange={(event) => setQuery({ ...query, search: event.target.value, page: 1 })} />
         <select className="field md:max-w-xs" value={query.departmentId} onChange={(event) => setQuery({ ...query, departmentId: event.target.value, page: 1 })}>
           <option value="">Tất cả phòng ban</option>
-          {departments.map((department) => <option key={department._id} value={department._id}>{department.departmentName}</option>)}
+          {departments.map((department) => <option key={department._id} value={department._id}>{td(department.departmentName, department.translations, 'departmentName')}</option>)}
         </select>
       </div>
 
@@ -147,6 +149,7 @@ export default function Employees() {
 }
 
 function EmployeeFormModal({ open, editing, form, departments, saving, onClose, onSubmit, onChange }) {
+  const { t, td } = useLanguage();
   if (!open) return null;
 
   return (
@@ -178,12 +181,12 @@ function EmployeeFormModal({ open, editing, form, departments, saving, onClose, 
             <input className="field" type="email" placeholder="Email" value={form.email} onChange={(event) => onChange({ ...form, email: event.target.value })} required />
             <input className="field" placeholder="Địa chỉ" value={form.address} onChange={(event) => onChange({ ...form, address: event.target.value })} />
             <select className="field" value={form.position} onChange={(event) => onChange({ ...form, position: event.target.value })} required>
-              {positions.map((position) => <option key={position} value={position}>{position}</option>)}
+              {positions.map((position) => <option key={position} value={position}>{t(position)}</option>)}
             </select>
             <input className="field" type="number" min="0" placeholder="Lương" value={form.salary} onChange={(event) => onChange({ ...form, salary: event.target.value })} required />
             <select className="field" value={form.departmentId} onChange={(event) => onChange({ ...form, departmentId: event.target.value })} required>
               <option value="">Chọn phòng ban</option>
-              {departments.map((department) => <option key={department._id} value={department._id}>{department.departmentName}</option>)}
+              {departments.map((department) => <option key={department._id} value={department._id}>{td(department.departmentName, department.translations, 'departmentName')}</option>)}
             </select>
             <select className="field" value={form.status} onChange={(event) => onChange({ ...form, status: event.target.value })}>
               <option>Active</option>

@@ -13,6 +13,12 @@ const workTaskSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
+    translations: {
+      en: {
+        title: { type: String, trim: true },
+        description: { type: String, trim: true }
+      }
+    },
     workDate: { type: Date, required: true },
     departmentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Department', required: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', default: null },

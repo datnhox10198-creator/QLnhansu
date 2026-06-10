@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
 import DataTable from '../components/DataTable';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { date } from '../utils/format';
 
 const todayKey = () => {
@@ -11,9 +12,9 @@ const todayKey = () => {
   return now.toISOString().slice(0, 10);
 };
 
-const time = (value) => (
+const time = (value, locale = 'vi-VN') => (
   value
-    ? new Date(value).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+    ? new Date(value).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
     : '-'
 );
 
@@ -26,6 +27,7 @@ const duration = (minutes) => {
 
 export default function Attendance() {
   const { user } = useAuth();
+  const { locale, t, td } = useLanguage();
   const isAdmin = user.role === 'admin';
   const [departments, setDepartments] = useState([]);
   const [rows, setRows] = useState([]);
@@ -72,10 +74,10 @@ export default function Attendance() {
 
   const columns = [
     { key: 'employee', label: 'Nhân viên', render: (row) => row.employeeId?.fullName },
-    { key: 'department', label: 'Phòng ban', render: (row) => row.employeeId?.departmentId?.departmentName },
+    { key: 'department', label: 'Phòng ban', render: (row) => td(row.employeeId?.departmentId?.departmentName, row.employeeId?.departmentId?.translations, 'departmentName') },
     { key: 'workDate', label: 'Ngày', render: (row) => date(row.workDate) },
-    { key: 'checkInAt', label: 'Check-in', render: (row) => time(row.checkInAt) },
-    { key: 'checkOutAt', label: 'Check-out', render: (row) => time(row.checkOutAt) },
+    { key: 'checkInAt', label: 'Check-in', render: (row) => time(row.checkInAt, locale) },
+    { key: 'checkOutAt', label: 'Check-out', render: (row) => time(row.checkOutAt, locale) },
     { key: 'totalMinutes', label: 'Tổng giờ', render: (row) => duration(row.totalMinutes) },
     { key: 'status', label: 'Trạng thái', render: (row) => badge(row.status) }
   ];
@@ -104,11 +106,11 @@ export default function Attendance() {
             <div className="grid gap-3 sm:grid-cols-3">
               <div>
                 <p className="text-xs font-semibold uppercase text-slate-500">Check-in</p>
-                <p className="mt-1 text-xl font-bold text-ink">{time(today?.checkInAt)}</p>
+                <p className="mt-1 text-xl font-bold text-ink">{time(today?.checkInAt, locale)}</p>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase text-slate-500">Check-out</p>
-                <p className="mt-1 text-xl font-bold text-ink">{time(today?.checkOutAt)}</p>
+                <p className="mt-1 text-xl font-bold text-ink">{time(today?.checkOutAt, locale)}</p>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase text-slate-500">Tổng giờ</p>
@@ -134,7 +136,7 @@ export default function Attendance() {
           <select className="field md:max-w-xs" value={filters.departmentId} onChange={(event) => setFilters({ ...filters, departmentId: event.target.value })}>
             <option value="">Tất cả phòng ban</option>
             {departments.map((department) => (
-              <option key={department._id} value={department._id}>{department.departmentName}</option>
+              <option key={department._id} value={department._id}>{td(department.departmentName, department.translations, 'departmentName')}</option>
             ))}
           </select>
           <input className="field md:max-w-xs" type="date" value={filters.workDate} onChange={(event) => setFilters({ ...filters, workDate: event.target.value })} />

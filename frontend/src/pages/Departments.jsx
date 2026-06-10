@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import api from '../api/client';
 import ConfirmModal from '../components/ConfirmModal';
 import ModalPortal from '../components/ModalPortal';
+import { useLanguage } from '../context/LanguageContext';
 
 const empty = { departmentName: '', description: '', managerId: '' };
 
 export default function Departments() {
+  const { t, td } = useLanguage();
   const [items, setItems] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [form, setForm] = useState(empty);
@@ -54,10 +56,10 @@ export default function Departments() {
       if (editing) await api.put(`/departments/${editing}`, form);
       else await api.post('/departments', form);
       closeForm();
-      setMessage({ type: 'success', text: editing ? 'Đã cập nhật phòng ban.' : 'Đã thêm phòng ban.' });
+      setMessage({ type: 'success', text: t(editing ? 'Đã cập nhật phòng ban.' : 'Đã thêm phòng ban.') });
       load();
     } catch (error) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Không lưu được phòng ban.' });
+      setMessage({ type: 'error', text: error.response?.data?.message || t('Không lưu được phòng ban.') });
     } finally {
       setSaving(false);
     }
@@ -67,10 +69,10 @@ export default function Departments() {
     try {
       await api.delete(`/departments/${removeId}`);
       setRemoveId(null);
-      setMessage({ type: 'success', text: 'Đã xoá phòng ban.' });
+      setMessage({ type: 'success', text: t('Đã xoá phòng ban.') });
       load();
     } catch (error) {
-      setMessage({ type: 'error', text: error.response?.data?.message || 'Không xoá được phòng ban.' });
+      setMessage({ type: 'error', text: error.response?.data?.message || t('Không xoá được phòng ban.') });
     }
   };
 
@@ -78,11 +80,11 @@ export default function Departments() {
     <div className="space-y-5">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Phòng ban</h1>
-          <p className="text-sm text-slate-500">Quản lý phòng ban và phân công trưởng phòng.</p>
+          <h1 className="text-2xl font-bold text-ink">{t('Phòng ban')}</h1>
+          <p className="text-sm text-slate-500">{t('Quản lý phòng ban và phân công trưởng phòng.')}</p>
         </div>
         <button className="btn-primary" onClick={openCreate}>
-          <Plus size={16} /> Thêm phòng ban
+          <Plus size={16} /> {t('Thêm phòng ban')}
         </button>
       </div>
 
@@ -93,31 +95,31 @@ export default function Departments() {
       )}
 
       <div className="rounded-3xl border border-white/70 bg-white/90 shadow-xl shadow-slate-900/5 backdrop-blur">
-        <div className="border-b border-slate-200 px-5 py-4"><h2 className="font-bold">Danh sách phòng ban</h2></div>
+        <div className="border-b border-slate-200 px-5 py-4"><h2 className="font-bold">{t('Danh sách phòng ban')}</h2></div>
         <div className="divide-y divide-slate-100">
           {items.map((item) => (
             <div key={item._id} className="flex flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between">
               <div className="space-y-2">
                 <div>
-                  <p className="font-semibold">{item.departmentName}</p>
-                  <p className="text-sm text-slate-500">{item.description || 'Chưa có mô tả'}</p>
+                  <p className="font-semibold">{td(item.departmentName, item.translations, 'departmentName')}</p>
+                  <p className="text-sm text-slate-500">{item.description ? td(item.description, item.translations, 'description') : t('Chưa có mô tả')}</p>
                 </div>
                 <div className="inline-flex items-center gap-2 rounded-2xl bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-700">
                   <UserRoundCog size={14} />
-                  {item.managerId?.fullName || 'Chưa có trưởng phòng'}
+                  {item.managerId?.fullName || t('Chưa có trưởng phòng')}
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="btn-secondary" onClick={() => openEdit(item)} aria-label="Sửa phòng ban">
+                <button className="btn-secondary" onClick={() => openEdit(item)} aria-label={t('Sửa phòng ban')}>
                   <Edit2 size={15} />
                 </button>
-                <button className="btn-danger" onClick={() => setRemoveId(item._id)} aria-label="Xoá phòng ban">
+                <button className="btn-danger" onClick={() => setRemoveId(item._id)} aria-label={t('Xoá phòng ban')}>
                   <Trash2 size={15} />
                 </button>
               </div>
             </div>
           ))}
-          {!items.length && <div className="px-5 py-10 text-center text-slate-500">Chưa có phòng ban</div>}
+          {!items.length && <div className="px-5 py-10 text-center text-slate-500">{t('Chưa có phòng ban')}</div>}
         </div>
       </div>
 
@@ -137,6 +139,7 @@ export default function Departments() {
 }
 
 function DepartmentFormModal({ open, editing, form, employees, saving, onChange, onClose, onSubmit }) {
+  const { t } = useLanguage();
   if (!open) return null;
 
   return (
@@ -145,25 +148,25 @@ function DepartmentFormModal({ open, editing, form, employees, saving, onChange,
       <div className="modal-fly modal-card w-full max-w-xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div>
-            <h2 className="text-xl font-bold text-ink">{editing ? 'Sửa phòng ban' : 'Thêm phòng ban'}</h2>
-            <p className="text-sm text-slate-500">Nhập thông tin phòng ban và trưởng phòng phụ trách.</p>
+            <h2 className="text-xl font-bold text-ink">{t(editing ? 'Sửa phòng ban' : 'Thêm phòng ban')}</h2>
+            <p className="text-sm text-slate-500">{t('Nhập thông tin phòng ban và trưởng phòng phụ trách.')}</p>
           </div>
-          <button className="btn-secondary shrink-0 px-2" type="button" onClick={onClose} aria-label="Đóng">
+          <button className="btn-secondary shrink-0 px-2" type="button" onClick={onClose} aria-label={t('Đóng')}>
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={onSubmit}>
           <div className="modal-body">
-            <label className="mb-3 block text-sm font-medium text-slate-700">Tên phòng ban
+            <label className="mb-3 block text-sm font-medium text-slate-700">{t('Tên phòng ban')}
               <input className="field mt-1" value={form.departmentName} onChange={(event) => onChange({ ...form, departmentName: event.target.value })} required />
             </label>
-            <label className="mb-4 block text-sm font-medium text-slate-700">Mô tả
+            <label className="mb-4 block text-sm font-medium text-slate-700">{t('Mô tả')}
               <textarea className="field mt-1 min-h-28 resize-y" value={form.description} onChange={(event) => onChange({ ...form, description: event.target.value })} />
             </label>
-            <label className="mb-4 block text-sm font-medium text-slate-700">Trưởng phòng
+            <label className="mb-4 block text-sm font-medium text-slate-700">{t('Trưởng phòng')}
               <select className="field mt-1" value={form.managerId} onChange={(event) => onChange({ ...form, managerId: event.target.value })}>
-                <option value="">Chưa phân công</option>
+                <option value="">{t('Chưa phân công')}</option>
                 {employees.map((employee) => (
                   <option key={employee._id} value={employee._id}>{employee.fullName} - {employee.position}</option>
                 ))}
@@ -171,9 +174,9 @@ function DepartmentFormModal({ open, editing, form, employees, saving, onChange,
             </label>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn-secondary" onClick={onClose}>Huỷ</button>
+            <button type="button" className="btn-secondary" onClick={onClose}>{t('Huỷ')}</button>
             <button className="btn-primary min-w-32" disabled={saving}>
-              <Plus size={16} /> {saving ? 'Đang lưu...' : 'Lưu'}
+              <Plus size={16} /> {t(saving ? 'Đang lưu...' : 'Lưu')}
             </button>
           </div>
         </form>

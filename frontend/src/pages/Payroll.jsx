@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
 import ModalPortal from '../components/ModalPortal';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { money } from '../utils/format';
 
 const currentPeriod = () => new Date().toISOString().slice(0, 7);
@@ -13,6 +14,7 @@ export default function Payroll() {
 }
 
 function AdminPayroll() {
+  const { td } = useLanguage();
   const [period, setPeriod] = useState(currentPeriod());
   const [summary, setSummary] = useState({ items: [], totalSalary: 0, totalEmployees: 0 });
   const [selectedDepartment, setSelectedDepartment] = useState(null);
@@ -72,7 +74,7 @@ function AdminPayroll() {
               ) : summary.items.length ? (
                 summary.items.map((department) => (
                   <tr key={department.departmentId} className="hover:bg-slate-50">
-                    <td className="whitespace-nowrap px-4 py-3 font-semibold text-ink">{department.departmentName}</td>
+                    <td className="whitespace-nowrap px-4 py-3 font-semibold text-ink">{td(department.departmentName, department.translations, 'departmentName')}</td>
                     <td className="whitespace-nowrap px-4 py-3">{department.employeeCount}</td>
                     <td className="whitespace-nowrap px-4 py-3">{department.managerCount}</td>
                     <td className="whitespace-nowrap px-4 py-3 font-bold text-brand">{money(department.totalSalary)}</td>
@@ -97,6 +99,7 @@ function AdminPayroll() {
 }
 
 function MyPayroll() {
+  const { td } = useLanguage();
   const [period, setPeriod] = useState(currentPeriod());
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -150,7 +153,7 @@ function MyPayroll() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <Info label="Phòng ban" value={slip.department?.departmentName} />
+            <Info label="Phòng ban" value={td(slip.department?.departmentName, slip.department?.translations, 'departmentName')} />
             <Info label="Lương cơ bản" value={money(slip.baseSalary)} />
             <Info label="Phụ cấp" value={money(slip.allowance)} />
             <Info label="Khấu trừ" value={money(slip.deduction)} />
@@ -171,6 +174,7 @@ function MyPayroll() {
 }
 
 function DepartmentPayrollModal({ department, period, onClose }) {
+  const { t, td } = useLanguage();
   if (!department) return null;
 
   return (
@@ -179,7 +183,7 @@ function DepartmentPayrollModal({ department, period, onClose }) {
       <div className="modal-card w-full max-w-4xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
           <div>
-            <h2 className="text-lg font-bold text-ink">{department.departmentName}</h2>
+            <h2 className="text-lg font-bold text-ink">{td(department.departmentName, department.translations, 'departmentName')}</h2>
             <p className="text-sm text-slate-500">Chi tiết phiếu lương tháng {period}</p>
           </div>
           <button className="btn-secondary px-2" onClick={onClose} aria-label="Đóng">
@@ -214,7 +218,7 @@ function DepartmentPayrollModal({ department, period, onClose }) {
           </table>
         </div>
         <div className="flex items-center justify-between border-t border-slate-200 px-5 py-4">
-          <span className="text-sm text-slate-500">{department.employeeCount} nhân sự</span>
+          <span className="text-sm text-slate-500">{department.employeeCount} {t('Nhân sự')}</span>
           <span className="text-lg font-bold text-brand">{money(department.totalSalary)}</span>
         </div>
       </div>

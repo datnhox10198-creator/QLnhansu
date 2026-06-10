@@ -2,6 +2,7 @@ import { BadgeCheck, BriefcaseBusiness, Save, UserRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { date, isoDate, money } from '../utils/format';
 
 const statusText = {
@@ -23,6 +24,7 @@ const profileForm = (employee) => ({
 
 export default function Profile() {
   const { employee, refreshMe } = useAuth();
+  const { t, td } = useLanguage();
   const [form, setForm] = useState(() => profileForm(employee));
   const [status, setStatus] = useState({ type: '', text: '' });
   const [saving, setSaving] = useState(false);
@@ -127,8 +129,8 @@ export default function Profile() {
             </div>
             <div className="space-y-3 text-sm">
               <Info label="Mã nhân viên" value={employee?.employeeCode} />
-              <Info label="Phòng ban" value={employee?.departmentId?.departmentName} />
-              <Info label="Chức vụ" value={employee?.position} />
+              <Info label="Phòng ban" value={td(employee?.departmentId?.departmentName, employee?.departmentId?.translations, 'departmentName')} />
+              <Info label="Chức vụ" value={t(employee?.position)} />
               <Info label="Lương" value={money(employee?.salary)} />
               <Info label="Trạng thái" value={statusText[employee?.status] || employee?.status} />
             </div>

@@ -1,6 +1,7 @@
 import Department from '../models/Department.js';
 import Employee from '../models/Employee.js';
 import WorkTask from '../models/WorkTask.js';
+import { ensureEnglishTranslation, translateFields } from '../utils/translation.js';
 
 const getCurrentEmployee = async (userId) => Employee.findOne({ userId }).populate('departmentId');
 
@@ -55,6 +56,7 @@ export const listTasks = async (req, res) => {
       .populate('createdByUser')
       .populate('assignees.employeeId')
       .sort({ workDate: -1, createdAt: -1 });
+    await Promise.all(tasks.map((task) => ensureEnglishTranslation(task, ['title', 'description'])));
 
     return res.json({
       canManage: true,
@@ -85,6 +87,7 @@ export const listTasks = async (req, res) => {
     .populate('createdByUser')
     .populate('assignees.employeeId')
     .sort({ workDate: -1, createdAt: -1 });
+  await Promise.all(tasks.map((task) => ensureEnglishTranslation(task, ['title', 'description'])));
 
   res.json({
     canManage: !!managedDepartment,
@@ -105,9 +108,11 @@ export const createTask = async (req, res) => {
       return res.status(400).json({ message: 'Chi duoc giao viec cho phong ban da co truong phong' });
     }
 
+    const translations = { en: await translateFields(req.body, ['title', 'description']) };
     const tasks = await WorkTask.create(departments.map((department) => ({
       title: req.body.title,
       description: req.body.description,
+      translations,
       workDate: req.body.workDate,
       departmentId: department._id,
       createdByUser: req.user._id,
@@ -148,6 +153,7 @@ export const createTask = async (req, res) => {
   const task = await WorkTask.create({
     title: req.body.title,
     description: req.body.description,
+    translations: { en: await translateFields(req.body, ['title', 'description']) },
     workDate: req.body.workDate,
     departmentId: managedDepartment._id,
     createdBy: employee._id,
