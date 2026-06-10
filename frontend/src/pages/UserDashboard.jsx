@@ -15,9 +15,9 @@ export default function UserDashboard() {
     <div className="space-y-6">
       <section className="dashboard-hero dashboard-hero-user">
         <div className="relative z-10 max-w-2xl">
-          <div className="hero-kicker"><Sparkles size={14} /> Your daily space</div>
-          <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-white sm:text-4xl">Hey {user?.fullName}, <span className="hero-highlight">let&apos;s glow.</span></h2>
-          <p className="mt-3 text-sm leading-6 text-slate-300">
+          <div className="hero-kicker"><Sparkles size={14} /> Không gian của bạn</div>
+          <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-slate-800 sm:text-4xl">Chào {user?.fullName}. <span className="hero-highlight">Sẵn sàng cho hôm nay?</span></h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
             {employee?.position} · {employee?.departmentId?.departmentName || 'Chưa phân phòng ban'}
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
@@ -25,7 +25,7 @@ export default function UserDashboard() {
               Xin nghỉ phép <ArrowUpRight size={16} />
             </Link>
             <Link to="/profile" className="btn hero-secondary">
-              <UserRound size={16} /> My profile
+              <UserRound size={16} /> Hồ sơ của tôi
             </Link>
           </div>
         </div>

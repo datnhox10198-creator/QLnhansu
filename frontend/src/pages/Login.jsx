@@ -33,21 +33,21 @@ export default function Login() {
           <div className="relative z-10 flex items-center gap-3">
             <div className="brand-mark"><ShieldCheck size={22} /></div>
             <div>
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-lime-300">Work. Play. Grow.</p>
-              <p className="text-xl font-extrabold text-white">Nexora</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">People workspace</p>
+              <p className="text-xl font-extrabold text-slate-800">Nexora</p>
             </div>
           </div>
 
           <div className="relative z-10 my-auto max-w-xl">
             <div className="login-badge">
-              <Sparkles size={14} /> Built for the next-gen team
+              <Sparkles size={14} /> Thiết kế cho thế hệ làm việc mới
             </div>
-            <h1 className="text-5xl font-extrabold leading-[1.03] tracking-[-0.055em] text-white xl:text-6xl">
-              Work less messy.<br />
-              <span className="login-highlight">Grow more happy.</span>
+            <h1 className="text-5xl font-extrabold leading-[1.03] tracking-[-0.055em] text-slate-800 xl:text-6xl">
+              Mọi thứ về công việc.<br />
+              <span className="login-highlight">Đơn giản và đẹp hơn.</span>
             </h1>
-            <p className="mt-6 max-w-lg text-base leading-7 text-slate-300">
-              Team, task, chấm công và lương thưởng trong một space duy nhất. Đủ nhanh cho Gen Z, đủ rõ cho cả công ty.
+            <p className="mt-6 max-w-lg text-base leading-7 text-slate-600">
+              Team, công việc, chấm công và lương thưởng trong một không gian trực quan, nhẹ nhàng và dễ dùng.
             </p>
 
             <div className="mt-10 grid grid-cols-3 gap-3">
@@ -66,21 +66,21 @@ export default function Login() {
               <div className="flex items-center gap-3">
                 <div className="brand-mark"><ShieldCheck size={22} /></div>
                 <div>
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-violet-600">Work. Play. Grow.</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">People workspace</p>
                   <p className="text-xl font-extrabold text-slate-900">Nexora</p>
                 </div>
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.18em] text-violet-600"><Flame size={15} /> Welcome back</div>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.045em] text-slate-950 sm:text-4xl">Ready to make moves?</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-500">Đăng nhập và bắt đầu một ngày làm việc thật gọn.</p>
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-600"><Flame size={15} /> Chào mừng trở lại</div>
+            <h2 className="mt-3 text-3xl font-bold tracking-[-0.045em] text-slate-950 sm:text-4xl">Bắt đầu ngày mới.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-500">Đăng nhập để tiếp tục không gian làm việc của bạn.</p>
 
             {error && <div className="mt-6 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</div>}
 
             <div className="mt-8 space-y-5">
               <label className="block text-sm font-semibold text-slate-700">
-                Work email
+                Email công việc
                 <input
                   type="email"
                   className="field mt-2"
@@ -91,7 +91,7 @@ export default function Login() {
                 />
               </label>
               <label className="block text-sm font-semibold text-slate-700">
-                Password
+                Mật khẩu
                 <span className="relative mt-2 block">
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -113,7 +113,7 @@ export default function Login() {
             </div>
 
             <button className="btn-primary mt-7 w-full py-3.5" disabled={loading}>
-              {loading ? <><LockKeyhole className="animate-pulse" size={17} /> Đang kết nối...</> : <>Let&apos;s go <ArrowRight size={17} /></>}
+              {loading ? <><LockKeyhole className="animate-pulse" size={17} /> Đang kết nối...</> : <>Tiếp tục <ArrowRight size={17} /></>}
             </button>
 
             <div className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
@@ -131,8 +131,8 @@ function Feature({ icon: Icon, value, label, color }) {
   return (
     <div className={`login-feature login-feature-${color}`}>
       <Icon className="mb-5" size={20} />
-      <p className="text-lg font-bold text-white">{value}</p>
-      <p className="mt-1 text-xs text-slate-400">{label}</p>
+      <p className="text-lg font-bold text-slate-800">{value}</p>
+      <p className="mt-1 text-xs text-slate-600">{label}</p>
     </div>
   );
 }

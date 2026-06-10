@@ -29,31 +29,31 @@ export default function AdminDashboard() {
       <section className="dashboard-hero">
         <div className="relative z-10 max-w-2xl">
           <div className="hero-kicker"><Sparkles size={14} /> {today}</div>
-          <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-white sm:text-4xl">
-            Hey {user?.fullName?.split(' ').slice(-1)[0]}, team mình đang <span className="hero-highlight">on fire.</span>
+          <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-slate-800 sm:text-4xl">
+            Chào {user?.fullName?.split(' ').slice(-1)[0]}. <span className="hero-highlight">Hôm nay có gì mới?</span>
           </h2>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">
-            Mọi tín hiệu nhân sự quan trọng đều ở đây. Nhanh, rõ và không còn những bảng dữ liệu nhàm chán.
+          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600">
+            Một cái nhìn nhanh về đội ngũ, lịch nghỉ và những việc cần bạn xử lý.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link to="/employees" className="btn hero-primary">
-              Vào team hub <ArrowUpRight size={16} />
+              Xem đội ngũ <ArrowUpRight size={16} />
             </Link>
             <Link to="/reports" className="btn hero-secondary">
-              <Flame size={16} /> Xem insight
+              <Flame size={16} /> Xem báo cáo
             </Link>
           </div>
         </div>
         <div className="hero-metric relative z-10">
-          <div className="relative grid h-32 w-32 place-items-center rounded-full" style={{ background: `conic-gradient(#34d399 ${approvalRate * 3.6}deg, rgba(255,255,255,.1) 0deg)` }}>
-            <div className="grid h-[106px] w-[106px] place-items-center rounded-full bg-slate-900">
+          <div className="relative grid h-32 w-32 place-items-center rounded-full" style={{ background: `conic-gradient(#0071e3 ${approvalRate * 3.6}deg, rgba(255,255,255,.45) 0deg)` }}>
+            <div className="grid h-[106px] w-[106px] place-items-center rounded-full bg-white/80">
               <div className="text-center">
-                <p className="text-3xl font-bold text-white">{approvalRate}%</p>
-                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-violet-200">Done rate</p>
+                <p className="text-3xl font-bold text-slate-800">{approvalRate}%</p>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">Done rate</p>
               </div>
             </div>
           </div>
-          <p className="mt-4 text-center text-xs font-semibold text-violet-100">{stats.pendingLeaves ?? 0} request đang chờ bạn</p>
+          <p className="mt-4 text-center text-xs font-semibold text-slate-600">{stats.pendingLeaves ?? 0} request đang chờ bạn</p>
         </div>
       </section>
 

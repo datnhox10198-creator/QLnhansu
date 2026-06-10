@@ -62,14 +62,14 @@ export default function Layout() {
 
   const NavContent = () => (
     <div className="flex h-full flex-col">
-      <div className="flex h-24 items-center justify-between border-b border-white/10 px-6">
+      <div className="flex h-24 items-center justify-between border-b border-black/[0.06] px-6">
         <div className="flex items-center gap-3">
           <div className="brand-mark">
             <ShieldCheck size={22} strokeWidth={2.4} />
           </div>
           <div>
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-lime-300">Work. Play. Grow.</p>
-            <p className="mt-0.5 text-xl font-extrabold tracking-tight text-white">Nexora</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">People workspace</p>
+            <p className="mt-0.5 text-xl font-extrabold tracking-tight text-slate-800">Nexora</p>
           </div>
         </div>
         <button className="icon-button-dark lg:hidden" onClick={() => setOpen(false)} aria-label="Đóng menu">
@@ -78,7 +78,7 @@ export default function Layout() {
       </div>
 
       <div className="px-4 pt-6">
-        <p className="mb-3 px-3 text-[10px] font-extrabold uppercase tracking-[0.22em] text-violet-300/60">Your space</p>
+        <p className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">Your space</p>
         <nav className="space-y-1.5">
           {links.map(([to, Icon, label]) => (
             <NavLink
@@ -97,21 +97,21 @@ export default function Layout() {
       </div>
 
       <div className="mt-auto p-4">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5">
+        <div className="rounded-2xl border border-black/[0.06] bg-white/70 p-3.5 shadow-sm backdrop-blur">
           <div className="flex items-center gap-3">
             <div className="avatar-pop grid h-10 w-10 shrink-0 place-items-center rounded-xl font-extrabold text-slate-950">
               {user.fullName?.charAt(0)}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-white">{user.fullName}</p>
-              <p className="truncate text-xs text-slate-400">{displayPosition}</p>
+              <p className="truncate text-sm font-semibold text-slate-800">{user.fullName}</p>
+              <p className="truncate text-xs text-slate-500">{displayPosition}</p>
             </div>
             <button className="icon-button-dark" onClick={logout} aria-label="Đăng xuất">
               <LogOut size={16} />
             </button>
           </div>
         </div>
-        <p className="mt-3 text-center text-[10px] font-bold tracking-wider text-violet-300/40">BUILD YOUR BEST WORK ✦</p>
+        <p className="mt-3 text-center text-[10px] font-semibold tracking-wider text-slate-400">NEXORA · PEOPLE OS</p>
       </div>
     </div>
   );
@@ -143,7 +143,7 @@ export default function Layout() {
               </div>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <div className="status-pill hidden md:flex">
+              <div className="status-pill hidden xl:flex">
                 <span className="status-dot" />
                 <span>All systems vibing</span>
                 <Sparkles size={13} />
@@ -170,8 +170,8 @@ export default function Layout() {
 
         <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto max-w-[1480px]">
-            <div className="mb-5 flex items-center gap-2 text-xs font-bold text-violet-600 lg:hidden">
-              <Zap size={14} fill="currentColor" /> Let&apos;s make today count
+            <div className="mb-5 flex items-center gap-2 text-xs font-semibold text-slate-500 lg:hidden">
+              <Zap size={14} /> Make today count
             </div>
             <Outlet />
           </div>

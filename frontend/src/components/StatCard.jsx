@@ -1,32 +1,32 @@
 const toneMap = {
   teal: {
-    icon: 'bg-lime-300 text-slate-950',
-    bar: 'bg-violet-600',
-    glow: 'from-lime-300/40',
+    icon: 'bg-[#cbd7bd] text-[#29382f]',
+    bar: 'bg-[#71806b]',
+    glow: 'from-[#dfe7d5]/60',
     skin: 'stat-lime'
   },
   rose: {
-    icon: 'bg-rose-300 text-rose-950',
-    bar: 'bg-rose-500',
-    glow: 'from-rose-300/30',
+    icon: 'bg-[#e6b8a2] text-[#653c2d]',
+    bar: 'bg-[#b66d50]',
+    glow: 'from-[#f1d8cc]/50',
     skin: 'stat-rose'
   },
   amber: {
-    icon: 'bg-amber-300 text-amber-950',
-    bar: 'bg-orange-500',
-    glow: 'from-amber-300/30',
+    icon: 'bg-[#ead9a7] text-[#5e5130]',
+    bar: 'bg-[#b59a55]',
+    glow: 'from-[#f3e8c7]/50',
     skin: 'stat-amber'
   },
   blue: {
-    icon: 'bg-cyan-300 text-cyan-950',
-    bar: 'bg-cyan-500',
-    glow: 'from-cyan-300/30',
+    icon: 'bg-[#bfd3dc] text-[#304c59]',
+    bar: 'bg-[#6f96a8]',
+    glow: 'from-[#dce9ee]/60',
     skin: 'stat-blue'
   },
   slate: {
-    icon: 'bg-violet-300 text-violet-950',
-    bar: 'bg-violet-600',
-    glow: 'from-violet-300/30',
+    icon: 'bg-[#c9c8bc] text-[#41443f]',
+    bar: 'bg-[#737a72]',
+    glow: 'from-[#e5e4dc]/60',
     skin: 'stat-violet'
   }
 };
@@ -39,8 +39,8 @@ export default function StatCard({ label, value, icon: Icon, tone = 'teal', note
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${style.glow} via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
       <div className="relative flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-slate-500">{label}</p>
-          <p className="mt-3 text-4xl font-extrabold tracking-[-0.05em] text-slate-950">{value ?? 0}</p>
+          <p className="text-xs font-semibold text-slate-500">{label}</p>
+          <p className="mt-3 text-4xl font-bold tracking-[-0.05em] text-slate-950">{value ?? 0}</p>
           <p className="mt-2 text-xs font-medium text-slate-500">{note}</p>
         </div>
         <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${style.icon}`}>
