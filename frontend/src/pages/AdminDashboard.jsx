@@ -60,11 +60,11 @@ export default function AdminDashboard() {
       {error && <div className="alert-error">{error}</div>}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <StatCard label="Nhân viên" value={stats.totalEmployees} icon={UsersRound} note="Đang hoạt động" />
-        <StatCard label="Phòng ban" value={stats.totalDepartments} icon={Building2} tone="blue" note="Trong tổ chức" />
-        <StatCard label="Tổng đơn nghỉ" value={stats.totalLeaves} icon={CalendarDays} tone="slate" note="Tất cả trạng thái" />
-        <StatCard label="Chờ duyệt" value={stats.pendingLeaves} icon={CalendarClock} tone="amber" note="Cần xử lý" />
-        <StatCard label="Đã duyệt" value={stats.approvedLeaves} icon={CalendarCheck} tone="teal" note={`${approvalRate}% tổng số đơn`} />
+        <StatCard label="Nhân viên" value={stats.totalEmployees} icon={UsersRound} note="Đang hoạt động" to="/employees" />
+        <StatCard label="Phòng ban" value={stats.totalDepartments} icon={Building2} tone="blue" note="Trong tổ chức" to="/departments" />
+        <StatCard label="Tổng đơn nghỉ" value={stats.totalLeaves} icon={CalendarDays} tone="slate" note="Tất cả trạng thái" to="/leaves" />
+        <StatCard label="Chờ duyệt" value={stats.pendingLeaves} icon={CalendarClock} tone="amber" note="Cần xử lý" to="/leaves?status=Pending" />
+        <StatCard label="Đã duyệt" value={stats.approvedLeaves} icon={CalendarCheck} tone="teal" note={`${approvalRate}% tổng số đơn`} to="/leaves?status=Approved" />
       </div>
 
       <LeaveCalendar title="Lịch nghỉ phép toàn công ty" />

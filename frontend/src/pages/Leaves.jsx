@@ -1,5 +1,6 @@
 import { CheckCircle2, Plus, Trash2, X, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import api from '../api/client';
 import ConfirmModal from '../components/ConfirmModal';
 import DataTable from '../components/DataTable';
@@ -15,8 +16,16 @@ const statusText = {
   Pending: 'Chờ duyệt'
 };
 
+const statusFilters = [
+  ['All', 'Tất cả'],
+  ['Pending', 'Chờ duyệt'],
+  ['Approved', 'Đã duyệt'],
+  ['Rejected', 'Từ chối']
+];
+
 export default function Leaves() {
   const { user, employee } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [leaves, setLeaves] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [form, setForm] = useState(emptyForm);
@@ -25,6 +34,11 @@ export default function Leaves() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [saving, setSaving] = useState(false);
   const isAdmin = user.role === 'admin';
+  const requestedStatus = searchParams.get('status');
+  const statusFilter = statusFilters.some(([value]) => value === requestedStatus) ? requestedStatus : 'All';
+  const filteredLeaves = statusFilter === 'All'
+    ? leaves
+    : leaves.filter((leave) => leave.status === statusFilter);
 
   const load = () => api.get('/leaves').then(({ data }) => setLeaves(data));
   useEffect(() => {
@@ -126,7 +140,24 @@ export default function Leaves() {
         </div>
       )}
 
-      <DataTable columns={columns} rows={leaves} />
+      <div className="leave-filter-bar">
+        {statusFilters.map(([value, label]) => {
+          const count = value === 'All' ? leaves.length : leaves.filter((leave) => leave.status === value).length;
+          return (
+            <button
+              key={value}
+              type="button"
+              className={`leave-filter ${statusFilter === value ? 'leave-filter-active' : ''}`}
+              onClick={() => setSearchParams(value === 'All' ? {} : { status: value })}
+              aria-pressed={statusFilter === value}
+            >
+              {label} <span>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <DataTable columns={columns} rows={filteredLeaves} />
 
       <LeaveFormModal
         open={formOpen}

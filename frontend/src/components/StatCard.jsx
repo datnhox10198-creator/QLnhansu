@@ -1,3 +1,6 @@
+import { ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
 const toneMap = {
   teal: {
     icon: 'bg-[#cbd7bd] text-[#29382f]',
@@ -31,11 +34,10 @@ const toneMap = {
   }
 };
 
-export default function StatCard({ label, value, icon: Icon, tone = 'teal', note = 'Dữ liệu hiện tại' }) {
+export default function StatCard({ label, value, icon: Icon, tone = 'teal', note = 'Dữ liệu hiện tại', to }) {
   const style = toneMap[tone] || toneMap.teal;
-
-  return (
-    <div className={`stat-card group ${style.skin}`}>
+  const content = (
+    <>
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${style.glow} via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
       <div className="relative flex items-start justify-between gap-4">
         <div>
@@ -47,9 +49,18 @@ export default function StatCard({ label, value, icon: Icon, tone = 'teal', note
           <Icon size={21} strokeWidth={2} />
         </div>
       </div>
+      {to && (
+        <span className="stat-card-action">
+          Xem chi tiết <ArrowUpRight size={13} />
+        </span>
+      )}
       <div className="absolute inset-x-0 bottom-0 h-0.5 bg-slate-100">
         <div className={`h-full w-1/3 transition-all duration-500 group-hover:w-2/3 ${style.bar}`} />
       </div>
-    </div>
+    </>
   );
+
+  return to
+    ? <Link to={to} className={`stat-card stat-card-link group ${style.skin}`} aria-label={`${label}: ${value ?? 0}. Xem chi tiết`}>{content}</Link>
+    : <div className={`stat-card group ${style.skin}`}>{content}</div>;
 }

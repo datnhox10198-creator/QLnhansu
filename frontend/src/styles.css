@@ -140,6 +140,97 @@ input, select, textarea {
   backdrop-filter: blur(20px);
 }
 
+.stat-card-link {
+  display: block;
+  cursor: pointer;
+}
+
+.stat-card-link:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .22);
+  outline-offset: 3px;
+}
+
+.stat-card-action {
+  position: absolute;
+  right: 1.25rem;
+  bottom: .65rem;
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  color: #64748b;
+  font-size: .65rem;
+  font-weight: 650;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: .2s ease;
+}
+
+.stat-card-link:hover .stat-card-action,
+.stat-card-link:focus-visible .stat-card-action {
+  opacity: 1;
+  transform: none;
+}
+
+.leave-filter-bar {
+  display: flex;
+  gap: .45rem;
+  overflow-x: auto;
+  border: 1px solid rgba(0, 0, 0, .055);
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, .8);
+  padding: .45rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .035);
+  backdrop-filter: blur(16px);
+}
+
+.leave-filter {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: .45rem;
+  border-radius: .9rem;
+  padding: .6rem .85rem;
+  color: #64748b;
+  font-size: .78rem;
+  font-weight: 650;
+  transition: .2s ease;
+}
+
+.leave-filter:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.leave-filter:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .2);
+  outline-offset: 2px;
+}
+
+.leave-filter span {
+  display: grid;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  place-items: center;
+  border-radius: 999px;
+  background: #f1f5f9;
+  font-size: .65rem;
+}
+
+.leave-filter-active {
+  background: #2563eb;
+  color: white;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, .18);
+}
+
+.leave-filter-active:hover {
+  background: #1d4ed8;
+  color: white;
+}
+
+.leave-filter-active span {
+  background: rgba(255,255,255,.18);
+}
+
 .stat-lime { background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(231, 247, 235, .9)); }
 .stat-rose { background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(255, 235, 239, .88)); }
 .stat-amber { background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(255, 246, 218, .88)); }
