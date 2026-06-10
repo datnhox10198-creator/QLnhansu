@@ -342,14 +342,13 @@ export function LanguageProvider({ children }) {
     translateDom(document.body, language);
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type === 'characterData') translateDom(mutation.target.parentElement || document.body, language);
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) translateDom(node, language);
           if (node.nodeType === Node.TEXT_NODE && node.parentElement) translateDom(node.parentElement, language);
         });
       });
     });
-    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
   }, [language]);
 
