@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { pathToFileURL } from 'url';
 import { connectDB } from '../config/db.js';
 import Department from '../models/Department.js';
 import Employee from '../models/Employee.js';
@@ -9,7 +10,7 @@ dotenv.config();
 
 const defaultPassword = process.env.SEED_USER_PASSWORD || 'User@123';
 
-const departmentUpdates = [
+export const departmentUpdates = [
   {
     aliases: ['Nhan su', 'Nhân sự'],
     departmentName: 'Nhân sự',
@@ -27,7 +28,7 @@ const departmentUpdates = [
   }
 ];
 
-const existingPeople = [
+export const existingPeople = [
   ['NV001', 'Nguyễn Văn An', 'an.nguyen@hrms.local'],
   ['NV002', 'Trần Thị Bình', 'binh.tran@hrms.local'],
   ['NV003', 'Lê Minh Chi', 'chi.le@hrms.local'],
@@ -39,7 +40,7 @@ const existingPeople = [
   ['NV009', 'Đặng Mỹ Linh', 'linh.dang@hrms.local']
 ];
 
-const newPeople = [
+export const newPeople = [
   {
     employeeCode: 'NV010',
     fullName: 'Nguyễn Hoàng Minh',
@@ -341,8 +342,10 @@ const run = async () => {
   await mongoose.disconnect();
 };
 
-run().catch(async (error) => {
-  console.error(error);
-  await mongoose.disconnect();
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  run().catch(async (error) => {
+    console.error(error);
+    await mongoose.disconnect();
+    process.exit(1);
+  });
+}
