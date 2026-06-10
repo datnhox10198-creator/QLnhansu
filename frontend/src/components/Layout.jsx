@@ -8,19 +8,22 @@ import {
   ClipboardCheck,
   ClipboardList,
   Clock3,
+  CornerDownLeft,
   LayoutDashboard,
+  LoaderCircle,
   LogOut,
   Menu,
+  RefreshCw,
   Search,
   ShieldCheck,
-  Sparkles,
   UserRound,
   UsersRound,
   Zap,
   X
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 
 const pageMeta = {
@@ -42,6 +45,11 @@ export default function Layout() {
   const [open, setOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [notificationsSeen, setNotificationsSeen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeResult, setActiveResult] = useState(0);
+  const [systemStatus, setSystemStatus] = useState({ state: 'checking', checkedAt: null });
+  const searchInputRef = useRef(null);
   const displayPosition = employee?.position || (user.role === 'admin' ? 'Quản trị viên' : 'Nhân viên');
   const [pageTitle, pageDescription] = pageMeta[pathname] || pageMeta['/'];
   const links = user.role === 'admin'
@@ -63,6 +71,22 @@ export default function Layout() {
         ['/payroll', Banknote, 'Phiếu lương'],
         ['/leaves', CalendarDays, 'Nghỉ phép']
       ];
+  const searchablePages = useMemo(
+    () => links.map(([to, icon, label]) => ({
+      to,
+      icon,
+      label,
+      description: pageMeta[to]?.[1] || 'Đi tới trang'
+    })),
+    [user.role]
+  );
+  const searchResults = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase('vi');
+    if (!query) return searchablePages;
+    return searchablePages.filter((item) =>
+      `${item.label} ${item.description}`.toLocaleLowerCase('vi').includes(query)
+    );
+  }, [searchQuery, searchablePages]);
   const notifications = user.role === 'admin'
     ? [
         { icon: CalendarDays, title: 'Kiểm tra đơn nghỉ phép', detail: 'Xem các yêu cầu đang chờ xử lý.', to: '/leaves', tone: 'blue' },
@@ -77,6 +101,80 @@ export default function Layout() {
     setNotificationsOpen(false);
     setNotificationsSeen(true);
     navigate(to);
+  };
+
+  const checkSystem = async () => {
+    setSystemStatus((current) => ({ ...current, state: 'checking' }));
+    const startedAt = performance.now();
+    try {
+      await api.get('/health', { timeout: 8000 });
+      setSystemStatus({
+        state: 'online',
+        checkedAt: new Date(),
+        latency: Math.round(performance.now() - startedAt)
+      });
+    } catch {
+      setSystemStatus({ state: 'offline', checkedAt: new Date(), latency: null });
+    }
+  };
+
+  const openSearch = () => {
+    setSearchOpen(true);
+    setSearchQuery('');
+    setActiveResult(0);
+  };
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+  };
+
+  const selectSearchResult = (result) => {
+    if (!result) return;
+    closeSearch();
+    navigate(result.to);
+  };
+
+  useEffect(() => {
+    checkSystem();
+    const interval = window.setInterval(checkSystem, 60000);
+    return () => window.clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        searchOpen ? closeSearch() : openSearch();
+      }
+      if (event.key === 'Escape' && searchOpen) closeSearch();
+    };
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    window.setTimeout(() => searchInputRef.current?.focus(), 0);
+  }, [searchOpen]);
+
+  useEffect(() => {
+    setActiveResult(0);
+  }, [searchQuery]);
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setActiveResult((current) => Math.min(current + 1, Math.max(searchResults.length - 1, 0)));
+    }
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setActiveResult((current) => Math.max(current - 1, 0));
+    }
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      selectSearchResult(searchResults[activeResult]);
+    }
   };
 
   const NavContent = () => (
@@ -162,16 +260,32 @@ export default function Layout() {
               </div>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <div className="status-pill hidden xl:flex">
+              <button
+                className={`status-pill status-${systemStatus.state} hidden xl:flex`}
+                onClick={checkSystem}
+                title={systemStatus.checkedAt ? `Kiểm tra lúc ${systemStatus.checkedAt.toLocaleTimeString('vi-VN')}` : 'Đang kiểm tra hệ thống'}
+              >
                 <span className="status-dot" />
-                <span>All systems vibing</span>
-                <Sparkles size={13} />
-              </div>
-              <div className="hidden items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-400 xl:flex">
+                <span>
+                  {systemStatus.state === 'checking' && 'Đang kiểm tra'}
+                  {systemStatus.state === 'online' && `Hệ thống ổn định${systemStatus.latency ? ` · ${systemStatus.latency}ms` : ''}`}
+                  {systemStatus.state === 'offline' && 'Mất kết nối API'}
+                </span>
+                {systemStatus.state === 'checking'
+                  ? <LoaderCircle className="animate-spin" size={13} />
+                  : <RefreshCw size={12} />}
+              </button>
+              <button
+                className="hidden items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-400 transition hover:border-blue-200 hover:bg-white hover:text-slate-700 xl:flex"
+                onClick={openSearch}
+              >
                 <Search size={15} />
-                <span className="w-40">Tìm kiếm nhanh...</span>
+                <span className="w-40 text-left">Tìm kiếm nhanh...</span>
                 <kbd className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[10px]">Ctrl K</kbd>
-              </div>
+              </button>
+              <button className="icon-button xl:hidden" onClick={openSearch} aria-label="Tìm kiếm nhanh">
+                <Search size={18} />
+              </button>
               <div className="relative">
                 <button
                   className={`icon-button relative ${notificationsOpen ? 'bg-blue-50 text-blue-600' : ''}`}
@@ -233,6 +347,58 @@ export default function Layout() {
           </div>
         </main>
       </div>
+
+      {searchOpen && (
+        <div className="command-backdrop" onMouseDown={closeSearch}>
+          <section className="command-palette" onMouseDown={(event) => event.stopPropagation()} aria-label="Tìm kiếm nhanh">
+            <div className="command-search">
+              <Search size={20} />
+              <input
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                placeholder="Tìm trang hoặc chức năng..."
+                aria-label="Tìm trang hoặc chức năng"
+              />
+              <button onClick={closeSearch} aria-label="Đóng tìm kiếm"><X size={18} /></button>
+            </div>
+
+            <div className="command-results">
+              <p className="command-label">{searchQuery ? 'Kết quả tìm kiếm' : 'Đi tới nhanh'}</p>
+              {searchResults.map((result, index) => {
+                const Icon = result.icon;
+                return (
+                  <button
+                    key={result.to}
+                    className={`command-result ${index === activeResult ? 'command-result-active' : ''}`}
+                    onMouseEnter={() => setActiveResult(index)}
+                    onClick={() => selectSearchResult(result)}
+                  >
+                    <span className="command-result-icon"><Icon size={18} /></span>
+                    <span className="min-w-0 flex-1 text-left">
+                      <span className="block text-sm font-semibold text-slate-800">{result.label}</span>
+                      <span className="block truncate text-xs text-slate-400">{result.description}</span>
+                    </span>
+                    {index === activeResult && <CornerDownLeft className="text-slate-400" size={15} />}
+                  </button>
+                );
+              })}
+              {!searchResults.length && (
+                <div className="px-4 py-10 text-center text-sm text-slate-500">
+                  Không tìm thấy chức năng phù hợp.
+                </div>
+              )}
+            </div>
+
+            <footer className="command-footer">
+              <span><kbd>↑</kbd><kbd>↓</kbd> Di chuyển</span>
+              <span><kbd>Enter</kbd> Mở</span>
+              <span><kbd>Esc</kbd> Đóng</span>
+            </footer>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
