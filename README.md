@@ -204,6 +204,27 @@ Lệnh này:
 - Phân bố tiến độ `Pending`, `Doing`, `Done` theo seed cố định.
 - Có thể chạy lại mà không tạo công việc trùng.
 
+### Đồng bộ khung lương
+
+```bash
+npm run sync:salaries:api --prefix backend
+```
+
+Lệnh này cập nhật lương gross theo phòng ban và chuẩn hóa chức danh dựa trên trưởng phòng đang được gán thực tế:
+
+| Nhóm | Khung lương/tháng |
+| --- | --- |
+| Trưởng phòng Marketing | 35.000.000 VNĐ |
+| Trưởng phòng IT | 45.000.000 VNĐ |
+| Trưởng phòng Tài Chính | 38.000.000 VNĐ |
+| Trưởng phòng Kinh Doanh | 40.000.000 VNĐ |
+| Nhân viên Marketing | 16.000.000-24.000.000 VNĐ |
+| Nhân viên IT | 22.000.000-32.000.000 VNĐ |
+| Nhân viên Tài Chính | 17.000.000-26.000.000 VNĐ |
+| Nhân viên Kinh Doanh | 15.000.000-23.000.000 VNĐ |
+
+Đây là dữ liệu mô phỏng phục vụ demo, không phải tư vấn lương hoặc cam kết mức lương thị trường.
+
 ## Tài khoản demo
 
 ### Quản trị viên
@@ -280,6 +301,9 @@ npm run sync:employees:api --prefix backend
 
 # Tạo công việc và tiến độ mẫu qua API
 npm run sync:tasks:api --prefix backend
+
+# Cập nhật khung lương theo phòng ban
+npm run sync:salaries:api --prefix backend
 ```
 
 ## Triển khai
