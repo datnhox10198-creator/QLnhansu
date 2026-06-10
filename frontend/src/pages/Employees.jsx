@@ -55,9 +55,16 @@ export default function Employees() {
     setMessage({ type: '', text: '' });
     try {
       const payload = { ...form, salary: Number(form.salary) };
-      if (editing) await api.put(`/employees/${editing}`, payload);
-      else await api.post('/employees', payload);
-      setMessage({ type: 'success', text: editing ? 'Đã cập nhật nhân viên.' : 'Đã thêm nhân viên.' });
+      if (editing) {
+        await api.put(`/employees/${editing}`, payload);
+        setMessage({ type: 'success', text: 'Đã cập nhật nhân viên và tài khoản đăng nhập.' });
+      } else {
+        const { data } = await api.post('/employees', payload);
+        const accountText = data.account?.defaultPassword
+          ? ` Tài khoản: ${data.account.email} / ${data.account.defaultPassword}`
+          : '';
+        setMessage({ type: 'success', text: `Đã thêm nhân viên.${accountText}` });
+      }
       closeForm();
       load();
     } catch (error) {

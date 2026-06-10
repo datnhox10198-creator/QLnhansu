@@ -13,7 +13,8 @@ const employeeRules = [
   body('email').isEmail(),
   body('position').isIn(['Nhân sự', 'Trưởng phòng']),
   body('salary').isNumeric(),
-  body('departmentId').isMongoId()
+  body('departmentId').isMongoId(),
+  body('password').optional().isLength({ min: 6 })
 ];
 
 router.use(protect);

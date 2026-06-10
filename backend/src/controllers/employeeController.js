@@ -26,13 +26,54 @@ export const getEmployee = async (req, res) => {
 };
 
 export const createEmployee = async (req, res) => {
-  const employee = await Employee.create(req.body);
-  res.status(201).json(await employee.populate('departmentId'));
+  const existingUser = await User.findOne({ email: req.body.email });
+  if (existingUser) {
+    return res.status(400).json({ message: 'Email đã được sử dụng cho một tài khoản khác' });
+  }
+
+  const user = await User.create({
+    fullName: req.body.fullName,
+    email: req.body.email,
+    password: req.body.password || 'User@123',
+    phone: req.body.phone,
+    role: 'user',
+    status: req.body.status || 'Active'
+  });
+
+  try {
+    const employee = await Employee.create({ ...req.body, userId: user._id });
+    res.status(201).json({
+      employee: await employee.populate('departmentId'),
+      account: {
+        email: user.email,
+        defaultPassword: req.body.password ? undefined : 'User@123'
+      }
+    });
+  } catch (error) {
+    await User.findByIdAndDelete(user._id);
+    throw error;
+  }
 };
 
 export const updateEmployee = async (req, res) => {
+  const currentEmployee = await Employee.findById(req.params.id);
+  if (!currentEmployee) return res.status(404).json({ message: 'Khong tim thay nhan vien' });
+
+  if (req.body.email !== currentEmployee.email) {
+    const emailOwner = await User.findOne({ email: req.body.email, _id: { $ne: currentEmployee.userId } });
+    if (emailOwner) return res.status(400).json({ message: 'Email đã được sử dụng cho một tài khoản khác' });
+  }
+
   const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true }).populate('departmentId');
   if (!employee) return res.status(404).json({ message: 'Khong tim thay nhan vien' });
+  if (employee.userId) {
+    await User.findByIdAndUpdate(employee.userId, {
+      fullName: employee.fullName,
+      email: employee.email,
+      phone: employee.phone,
+      status: employee.status
+    }, { runValidators: true });
+  }
   res.json(employee);
 };
 
@@ -55,6 +96,9 @@ export const updateMyProfile = async (req, res) => {
 export const deleteEmployee = async (req, res) => {
   const employee = await Employee.findByIdAndDelete(req.params.id);
   if (!employee) return res.status(404).json({ message: 'Khong tim thay nhan vien' });
-  await Department.updateMany({ managerId: employee._id }, { $set: { managerId: null } });
+  await Promise.all([
+    Department.updateMany({ managerId: employee._id }, { $set: { managerId: null } }),
+    employee.userId ? User.findByIdAndDelete(employee.userId) : Promise.resolve()
+  ]);
   res.json({ message: 'Da xoa nhan vien' });
 };
