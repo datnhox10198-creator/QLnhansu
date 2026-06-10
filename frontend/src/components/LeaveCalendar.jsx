@@ -1,6 +1,7 @@
-import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Building2, CalendarDays, ChevronLeft, ChevronRight, FileText, UserRound, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client';
+import ModalPortal from './ModalPortal';
 
 const weekdays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 
@@ -39,10 +40,14 @@ const statusText = {
   Pending: 'Chờ duyệt'
 };
 
+const statusOptions = ['All', 'Approved', 'Pending', 'Rejected'];
+
 export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
   const [mode, setMode] = useState('week');
   const [cursor, setCursor] = useState(new Date());
   const [leaves, setLeaves] = useState([]);
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [selectedLeave, setSelectedLeave] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -75,7 +80,31 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
     setCursor((current) => (mode === 'week' ? addDays(current, direction * 7) : addMonths(current, direction)));
   };
 
-  const getLeaves = (day) => leaves.filter((leave) => sameDay(new Date(leave.leaveDate), day));
+  const rangeLeaves = useMemo(() => {
+    const firstDay = days[0];
+    const lastDay = addDays(days[days.length - 1], 1);
+    return leaves.filter((leave) => {
+      const leaveDate = new Date(leave.leaveDate);
+      return leaveDate >= firstDay && leaveDate < lastDay;
+    });
+  }, [days, leaves]);
+
+  const filteredLeaves = useMemo(
+    () => statusFilter === 'All' ? rangeLeaves : rangeLeaves.filter((leave) => leave.status === statusFilter),
+    [rangeLeaves, statusFilter]
+  );
+
+  const leavesByDay = useMemo(() => filteredLeaves.reduce((calendar, leave) => {
+    const key = new Date(leave.leaveDate).toDateString();
+    if (!calendar[key]) calendar[key] = [];
+    calendar[key].push(leave);
+    return calendar;
+  }, {}), [filteredLeaves]);
+
+  const uniqueEmployees = new Set(rangeLeaves.map((leave) => leave.employeeId?._id).filter(Boolean)).size;
+  const statusCount = (status) => status === 'All'
+    ? rangeLeaves.length
+    : rangeLeaves.filter((leave) => leave.status === status).length;
 
   return (
     <section className="overflow-hidden rounded-3xl border border-white/70 bg-white/90 shadow-xl shadow-slate-900/5 backdrop-blur">
@@ -91,16 +120,44 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="grid grid-cols-2 rounded-2xl border border-slate-200 bg-slate-50 p-1 text-sm">
-            <button className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'week' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('week')}>Tuần</button>
-            <button className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'month' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('month')}>Tháng</button>
+            <button type="button" className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'week' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('week')}>Tuần</button>
+            <button type="button" className={`rounded-xl px-3 py-1.5 font-semibold ${mode === 'month' ? 'bg-white text-brand shadow-sm' : 'text-slate-500'}`} onClick={() => setMode('month')}>Tháng</button>
           </div>
-          <button className="btn-secondary px-2" onClick={() => move(-1)} aria-label="Trước"><ChevronLeft size={17} /></button>
-          <button className="btn-secondary px-2" onClick={() => setCursor(new Date())}>Hôm nay</button>
-          <button className="btn-secondary px-2" onClick={() => move(1)} aria-label="Sau"><ChevronRight size={17} /></button>
+          <button type="button" className="btn-secondary px-2" onClick={() => move(-1)} aria-label="Trước"><ChevronLeft size={17} /></button>
+          <button type="button" className="btn-secondary px-2" onClick={() => setCursor(new Date())}>Hôm nay</button>
+          <button type="button" className="btn-secondary px-2" onClick={() => move(1)} aria-label="Sau"><ChevronRight size={17} /></button>
         </div>
       </div>
 
       {error && <div className="border-b border-rose-100 bg-rose-50 px-5 py-2 text-sm text-rose-700">{error}</div>}
+
+      <div className="calendar-overview">
+        <div className="calendar-summary">
+          <div>
+            <span>Tổng đơn</span>
+            <strong>{rangeLeaves.length}</strong>
+          </div>
+          <div>
+            <span>Nhân sự nghỉ</span>
+            <strong>{uniqueEmployees}</strong>
+          </div>
+        </div>
+        <div className="calendar-filters" aria-label="Lọc lịch theo trạng thái">
+          {statusOptions.map((status) => (
+            <button
+              key={status}
+              type="button"
+              className={`calendar-filter calendar-filter-${status.toLowerCase()} ${statusFilter === status ? 'is-active' : ''}`}
+              onClick={() => setStatusFilter(status)}
+              aria-pressed={statusFilter === status}
+            >
+              <i />
+              {status === 'All' ? 'Tất cả' : statusText[status]}
+              <span>{statusCount(status)}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50/80 text-center text-xs font-bold text-slate-500">
         {weekdays.map((day) => <div key={day} className="px-2 py-2">{day}</div>)}
@@ -108,7 +165,7 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
 
       <div className={`grid grid-cols-7 ${mode === 'week' ? 'min-h-72' : ''}`}>
         {days.map((day) => {
-          const dayLeaves = getLeaves(day);
+          const dayLeaves = leavesByDay[day.toDateString()] || [];
           const outsideMonth = mode === 'month' && day.getMonth() !== cursor.getMonth();
           const today = sameDay(day, new Date());
 
@@ -121,18 +178,69 @@ export default function LeaveCalendar({ title = 'Lịch nghỉ phép' }) {
               </div>
               <div className="space-y-1">
                 {dayLeaves.slice(0, mode === 'week' ? 4 : 2).map((leave) => (
-                  <div key={leave._id} className={`truncate rounded-xl px-2 py-1 text-xs font-semibold ring-1 ${statusClass[leave.status] || statusClass.Pending}`}>
-                    {leave.employeeId?.fullName || 'Nhân viên'} - {statusText[leave.status] || leave.status}
-                  </div>
+                  <button
+                    key={leave._id}
+                    type="button"
+                    className={`calendar-event w-full rounded-xl px-2 py-1.5 text-left text-xs ring-1 ${statusClass[leave.status] || statusClass.Pending}`}
+                    onClick={() => setSelectedLeave(leave)}
+                    title={`${leave.employeeId?.fullName || 'Nhân viên'} - ${statusText[leave.status] || leave.status}`}
+                  >
+                    <span>{leave.employeeId?.fullName || 'Nhân viên'}</span>
+                    <small>{leave.employeeId?.departmentId?.departmentName || 'Chưa có phòng ban'}</small>
+                  </button>
                 ))}
                 {dayLeaves.length > (mode === 'week' ? 4 : 2) && (
-                  <div className="text-xs font-semibold text-slate-500">+{dayLeaves.length - (mode === 'week' ? 4 : 2)} đơn khác</div>
+                  <div className="px-1 text-xs font-semibold text-slate-500">+{dayLeaves.length - (mode === 'week' ? 4 : 2)} đơn khác</div>
                 )}
               </div>
             </div>
           );
         })}
       </div>
+
+      <LeaveDetailModal leave={selectedLeave} onClose={() => setSelectedLeave(null)} />
     </section>
+  );
+}
+
+function LeaveDetailModal({ leave, onClose }) {
+  if (!leave) return null;
+
+  return (
+    <ModalPortal>
+      <div className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4 backdrop-blur-sm" onMouseDown={onClose}>
+        <div className="modal-fly modal-card w-full max-w-lg" onMouseDown={(event) => event.stopPropagation()}>
+          <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.14em] text-slate-400">Chi tiết nghỉ phép</p>
+              <h3 className="mt-1 text-xl font-bold text-ink">{leave.employeeId?.fullName || 'Nhân viên'}</h3>
+            </div>
+            <button type="button" className="btn-secondary shrink-0 px-2" onClick={onClose} aria-label="Đóng"><X size={18} /></button>
+          </div>
+          <div className="modal-body space-y-3">
+            <DetailRow icon={Building2} label="Phòng ban" value={leave.employeeId?.departmentId?.departmentName || 'Chưa cập nhật'} />
+            <DetailRow icon={CalendarDays} label="Ngày nghỉ" value={new Date(leave.leaveDate).toLocaleDateString('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })} />
+            <DetailRow icon={FileText} label="Lý do" value={leave.reason || 'Không có lý do'} />
+            <DetailRow
+              icon={UserRound}
+              label="Trạng thái"
+              value={<span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${statusClass[leave.status] || statusClass.Pending}`}>{statusText[leave.status] || leave.status}</span>}
+            />
+          </div>
+        </div>
+      </div>
+    </ModalPortal>
+  );
+}
+
+function DetailRow({ icon: Icon, label, value }) {
+  return (
+    <div className="flex gap-3 rounded-2xl bg-slate-50 p-3.5">
+      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-slate-500 shadow-sm"><Icon size={17} /></div>
+      <div className="min-w-0">
+        <p className="text-xs font-semibold text-slate-400">{label}</p>
+        <div className="mt-1 text-sm font-semibold text-slate-700">{value}</div>
+      </div>
+    </div>
   );
 }
