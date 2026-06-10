@@ -30,7 +30,7 @@ export default function AdminDashboard() {
         <div className="relative z-10 max-w-2xl">
           <div className="hero-kicker"><Sparkles size={14} /> {today}</div>
           <h2 className="mt-3 text-3xl font-bold tracking-[-0.035em] text-slate-800 sm:text-4xl">
-            Chào {user?.fullName?.split(' ').slice(-1)[0]}. <span className="hero-highlight">Hôm nay có gì mới?</span>
+            Tổng quan hôm nay. <span className="hero-highlight">Có gì cần chú ý?</span>
           </h2>
           <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600">
             Một cái nhìn nhanh về đội ngũ, lịch nghỉ và những việc cần bạn xử lý.
