@@ -1,6 +1,9 @@
 import Employee from '../models/Employee.js';
 import Department from '../models/Department.js';
 import User from '../models/User.js';
+import Attendance from '../models/Attendance.js';
+import LeaveRequest from '../models/LeaveRequest.js';
+import WorkTask from '../models/WorkTask.js';
 
 export const listEmployees = async (req, res) => {
   const page = Number(req.query.page) || 1;
@@ -94,11 +97,23 @@ export const updateMyProfile = async (req, res) => {
 };
 
 export const deleteEmployee = async (req, res) => {
-  const employee = await Employee.findByIdAndDelete(req.params.id);
+  const employee = await Employee.findById(req.params.id);
   if (!employee) return res.status(404).json({ message: 'Khong tim thay nhan vien' });
+
   await Promise.all([
     Department.updateMany({ managerId: employee._id }, { $set: { managerId: null } }),
-    employee.userId ? User.findByIdAndDelete(employee.userId) : Promise.resolve()
+    Attendance.deleteMany({ employeeId: employee._id }),
+    LeaveRequest.deleteMany({ employeeId: employee._id }),
+    WorkTask.deleteMany({ createdBy: employee._id }),
+    WorkTask.updateMany(
+      { 'assignees.employeeId': employee._id },
+      { $pull: { assignees: { employeeId: employee._id } } }
+    )
   ]);
+
+  await WorkTask.deleteMany({ 'assignees.0': { $exists: false } });
+  await employee.deleteOne();
+  if (employee.userId) await User.findByIdAndDelete(employee.userId);
+
   res.json({ message: 'Da xoa nhan vien' });
 };

@@ -20,8 +20,10 @@ const getApprovalContext = async (user) => {
   };
 };
 
-const canApproveLeave = (leave, user, managedEmployeeIds) => {
+const canApproveLeave = (leave, user, managedEmployeeIds, currentEmployeeId = null) => {
   if (user.role === 'admin') return true;
+  const leaveEmployeeId = leave.employeeId?._id || leave.employeeId;
+  if (currentEmployeeId && leaveEmployeeId?.equals(currentEmployeeId)) return false;
   return managedEmployeeIds.some((employeeId) => leave.employeeId?._id?.equals(employeeId) || leave.employeeId?.equals(employeeId));
 };
 
@@ -43,7 +45,7 @@ export const listLeaves = async (req, res) => {
 
   res.json(leaves.map((leave) => ({
     ...leave.toObject(),
-    canApprove: canApproveLeave(leave, req.user, context?.managedEmployeeIds || [])
+    canApprove: canApproveLeave(leave, req.user, context?.managedEmployeeIds || [], context?.employee?._id)
   })));
 };
 
@@ -75,13 +77,16 @@ export const updateLeave = async (req, res) => {
     if (req.body.reason) leave.set('translations.en.reason', await translateToEnglish(req.body.reason));
   } else {
     const context = await getApprovalContext(req.user);
-    const isManagerOfLeave = canApproveLeave(leave, req.user, context.managedEmployeeIds);
+    const isManagerOfLeave = canApproveLeave(leave, req.user, context.managedEmployeeIds, context.employee?._id);
 
-    if (req.body.status && isManagerOfLeave && leave.status === 'Pending') {
-      leave.status = req.body.status;
-      await leave.save();
-      const populated = await leave.populate({ path: 'employeeId', populate: { path: 'departmentId', populate: { path: 'managerId' } } });
-      return res.json({ ...populated.toObject(), canApprove: true });
+    if (req.body.status) {
+      if (isManagerOfLeave && leave.status === 'Pending') {
+        leave.status = req.body.status;
+        await leave.save();
+        const populated = await leave.populate({ path: 'employeeId', populate: { path: 'departmentId', populate: { path: 'managerId' } } });
+        return res.json({ ...populated.toObject(), canApprove: true });
+      }
+      return res.status(403).json({ message: 'Khong the duyet don nay' });
     }
 
     if (!context.employee || !leave.employeeId.equals(context.employee._id) || leave.status !== 'Pending') {

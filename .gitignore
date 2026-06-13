@@ -4,3 +4,6 @@ dist
 build
 .DS_Store
 npm-debug.log*
+dev.log
+dev.stdout.log
+dev.stderr.log
