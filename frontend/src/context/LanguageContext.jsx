@@ -73,7 +73,6 @@ const english = {
   'Hiện mật khẩu': 'Show password',
   'Đang kết nối...': 'Connecting...',
   'Tiếp tục': 'Continue',
-  'Phiên đăng nhập được bảo vệ bằng xác thực JWT.': 'Your session is protected by JWT authentication.',
   'Không kết nối được API. Kiểm tra backend và cấu hình VITE_API_URL.': 'Could not connect to the API. Check the backend and VITE_API_URL configuration.',
   'Tiếng Việt': 'Vietnamese',
   'Tiếng Anh': 'English',

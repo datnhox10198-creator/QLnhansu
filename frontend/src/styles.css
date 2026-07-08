@@ -936,23 +936,6 @@ main h1.text-2xl + p {
   opacity: .62;
 }
 
-.editorial-security {
-  display: flex;
-  align-items: center;
-  gap: .65rem;
-  margin-top: 1rem;
-  border-top: 1px solid rgba(15, 23, 42, .08);
-  padding-top: 1rem;
-  color: #64748b;
-  font-size: .7rem;
-  line-height: 1.45;
-}
-
-.editorial-security svg {
-  flex: none;
-  color: #0f9f72;
-}
-
 .editorial-footnote {
   position: absolute;
   z-index: 3;

@@ -118,10 +118,6 @@ export default function Login() {
             : <>{t('Tiếp tục')} <ArrowRight size={18} /></>}
         </button>
 
-        <div className="editorial-security">
-          <ShieldCheck size={17} />
-          <span>{t('Phiên đăng nhập được bảo vệ bằng xác thực JWT.')}</span>
-        </div>
       </form>
 
       <div className="editorial-footnote">Human Resources Management System · 2026</div>
